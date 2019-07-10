@@ -74,7 +74,7 @@ body {
 }
 
 body {
-	background: #202024;
+	background: #262626;
 }
 
 body.is-loading *, body.is-loading *:before, body.is-loading *:after {
@@ -131,6 +131,7 @@ body, input, select, textarea {
 
 
 #profPic {
+	width: 150px;
 	border: 1px solid gray;
 	border-radius: 50%;
 	margin-bottom: 44px;
@@ -166,7 +167,7 @@ p {
 }
 
 h1, h2, h3, h4, h5, h6 {
-	color: #fff;
+	color: #f5f5f5;
 	font-weight: 400;
 	line-height: 1.5;
 	margin: 0 0 1em 0;
@@ -277,7 +278,7 @@ header p {
 
 header h2+p {
 	font-size: 1.25em;
-	margin-top: -1em;
+	margin-top: 0;
 }
 
 header h3+p {
@@ -508,7 +509,7 @@ input[type="radio"]+label:before {
 .box {
 	border-radius: 4px;
 	margin-bottom: 2em;
-	background: #2c2c32;
+	background: #262626;
 	text-align: center;
 }
 
@@ -521,12 +522,15 @@ input[type="radio"]+label:before {
 }
 
 .box .image img {
-	border-radius: 4px 4px 0 0;
+	border-radius: 10px;
+	min-height: 195px;
+	max-height: 195px;
 }
 
 .box .inner {
 	padding: 1.5em;
 	width: 100% !important;
+	color: #f5f5f5;
 }
 
 @media screen and (max-width: 480px) {
@@ -678,7 +682,7 @@ ul.icons li a:before {
 	width: 2em;
 	height: 2em;
 	line-height: 2em;
-	color: white;
+	color: #f5f5f5;
 	border: 1px solid rgba(110, 110, 110, .7);
 }
 
@@ -878,10 +882,10 @@ input[type="submit"], input[type="reset"], input[type="button"], button, .button
 	-webkit-transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
 	-ms-transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
 	transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
-	background-color: #2F7994;
+	background-color: #3f3f3f;
 	border-radius: 4px;
 	border: 0;
-	color: white !important;
+	color: #f5f5f5 !important;
 	cursor: pointer;
 	display: inline-block;
 	font-weight: 400;
@@ -894,7 +898,7 @@ input[type="submit"], input[type="reset"], input[type="button"], button, .button
 }
 
 input[type="submit"]:hover, input[type="reset"]:hover, input[type="button"]:hover, button:hover, .button:hover {
-	background-color: #82cec6;
+	background-color: #f5f5f5;
 }
 
 input[type="submit"]:active, input[type="reset"]:active, input[type="button"]:active, button:active, .button:active {
@@ -1021,12 +1025,12 @@ input[type="submit"].disabled, input[type="submit"]:disabled, input[type="reset"
 	-webkit-justify-content: center;
 	-ms-justify-content: center;
 	justify-content: center;
-	padding: 8em 4em 6em 4em;
+	padding: .5em 4em 6em 4em;
 	min-height: 25vh;
-	/* background-image: url("../../images/vos.jpg"); */
-	background-position: center;
+	/* background-position: center;
 	background-size: cover;
-	background-repeat: no-repeat;
+	background-repeat: no-repeat; */
+	background-color: #262626;
 	border-top: 0;
 	position: relative;
 	text-align: center;
@@ -1089,31 +1093,6 @@ input[type="submit"].disabled, input[type="submit"]:disabled, input[type="reset"
 	border: none;
 }
 
-/* #banner .more {
-			background-image: url("images/arrow.svg");
-			background-position: center .7em;
-			background-repeat: no-repeat;
-			background-size: auto;
-			border: 1px solid #fff;
-			border-radius: 100%;
-			color: rgba(255, 255, 255, 0.75);
-			display: block;
-			height: 3em;
-			text-indent: 3em;
-			overflow: hidden;
-			white-space: nowrap;
-			width: 3em;
-			z-index: 2;
-			margin: 0 auto 2em auto;
-		} */
-
-/* 
-			#banner .more:hover {
-				background-color: rgba(255, 255, 255, 0.05);
-				border: 1px solid #fff;
-				color: #FFF;
-			} */
-
 #banner video {
 	-moz-transform: translateX(50%) translateY(50%);
 	-webkit-transform: translateX(50%) translateY(50%);
@@ -1139,7 +1118,6 @@ input[type="submit"].disabled, input[type="submit"]:disabled, input[type="reset"
 	-ms-transition-delay: 1s;
 	transition-delay: 1s;
 	content: '';
-	/* background-color: #37404a; */
 	display: block;
 	height: 100%;
 	left: 0;
@@ -1179,7 +1157,6 @@ body.is-loading #banner:before {
 /* Body */
 
 #top {
-	background-image: url("../../images/bg.jpg");
 	background-size: cover;
 }
 
@@ -1210,14 +1187,19 @@ body.is-loading #banner:before {
 /* Footer */
 
 #footer {
-	padding: 4em 0 2em 0;
-	background-color: #1b1b1f;
+	padding-top: 1em;
+	padding-bottom: 1em;
+	background-color: #3f3f3f;
 	text-align: center;
 }
 
 #footer .inner {
 	width: 50%;
 	margin: 0 auto;
+}
+
+#footer p {
+	color: #f5f5f5;
 }
 
 @media screen and (max-width: 980px) {
