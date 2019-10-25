@@ -672,17 +672,12 @@ ul.icons li {
 	margin: 10px;
 }
 
-ul.icons li a {
-	color: blue;
-}
-
 ul.icons li a:before {
 	font-size: 1.5em;
 	display: block;
 	width: 2em;
 	height: 2em;
 	line-height: 2em;
-	color: #f5f5f5;
 	border: 1px solid rgba(110, 110, 110, .7);
 }
 
