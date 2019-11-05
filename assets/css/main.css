@@ -314,7 +314,7 @@ header h4+p, header h5+p, header h6+p {
 
 .thumbnails .box {
 	margin: 0 1em 2em 1em;
-	width: 30%;
+	width: 25%;
 }
 
 @media screen and (max-width: 1280px) {
