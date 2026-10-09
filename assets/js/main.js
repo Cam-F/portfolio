@@ -86,12 +86,12 @@
 
 				var cards = [
 					{
-						title: 'Unannounced Project',
+						title: 'Isometric ARPG',
 						badges: ['Designer'],
 						description: 'Designed gameplay and encounter content for an unannounced project, collaborating across design, art, engineering, VFX, audio, and production while staying NDA-safe.'
 					},
 					{
-						title: 'Unannounced Project',
+						title: 'Open World Survival',
 						badges: ['Designer'],
 						description: 'Supported levels, systems, characters, weapons, enemies, and live/event content for an unannounced project, helping drive implementation from concept through iteration.'
 					}
@@ -121,7 +121,7 @@
 				var $wayfinderCard = $thumbs.find('.game-card').first();
 
 				if ($wayfinderCard.length > 0)
-					$wayfinderCard.after(cardHtml);
+					$wayfinderCard.before(cardHtml);
 				else
 					$thumbs.append(cardHtml);
 			};
