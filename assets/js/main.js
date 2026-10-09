@@ -32,7 +32,7 @@
 			$('form').placeholder();
 
 		// Footer version marker.
-			$('.site-version').text('V38');
+			$('.site-version').text('V39');
 
 		// Add script-injected portfolio project cards.
 			var addUnannouncedCards = function() {
@@ -54,6 +54,14 @@
 							'.unannounced-game-card .nda-disabled-button {' +
 								'cursor: default;' +
 								'opacity: 0.86;' +
+							'}' +
+							'.dust-game-card {' +
+								'position: relative;' +
+								'overflow: visible;' +
+								'box-shadow: inset 0 0 0 1px rgba(255, 122, 32, 0.42), 0 0 14px rgba(255, 90, 0, 0.18), 0 0 30px rgba(255, 70, 0, 0.14);' +
+							'}' +
+							'.dust-game-card:hover {' +
+								'box-shadow: inset 0 0 0 1px rgba(255, 122, 32, 0.58), 0 0 18px rgba(255, 90, 0, 0.24), 0 0 38px rgba(255, 70, 0, 0.18);' +
 							'}' +
 							'.game-card-details {' +
 								'margin: 0;' +
