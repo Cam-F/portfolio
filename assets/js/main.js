@@ -32,7 +32,7 @@
 			$('form').placeholder();
 
 		// Footer version marker.
-			$('.site-version').text('V36');
+			$('.site-version').text('V37');
 
 		// Add script-injected portfolio project cards.
 			var addUnannouncedCards = function() {
@@ -42,63 +42,55 @@
 					return;
 
 				if ($('#unannounced-game-card-styles').length === 0) {
-					$('head').append('\
-						<style id="unannounced-game-card-styles">\
-							.unannounced-game-card .nda-card-art-link {\
-							\tdisplay: block;\
-							\tborder: 0 !important;\
-							\tbackground: #090909;\
-							\tline-height: 0;\
-							\toverflow: hidden;\
-							}\
-							.unannounced-game-card .nda-disabled-button {\
-							\tcursor: default;\
-							\topacity: 0.86;\
-							}\
-							.game-card-details {\
-							\tmargin: 1.05em 0 0 0;\
-							\ttext-align: left;\
-							}\
-							.game-card-details summary {\
-							\tcursor: pointer;\
-							\tdisplay: inline-flex;\
-							\talign-items: center;\
-							\tfont-family: "Courier New", "Lucida Console", monospace;\
-							\tfont-size: 0.78em;\
-							\tfont-weight: 700;\
-							\tletter-spacing: 0.14em;\
-							\tline-height: 1;\
-							\ttext-transform: uppercase;\
-							\tcolor: rgba(255, 255, 255, 0.68);\
-							\tborder: 0 !important;\
-							\tuser-select: none;\
-							}\
-							.game-card-details summary:hover,\
-							.game-card-details summary:focus {\
-							\tcolor: #ffffff;\
-							}\
-							.game-card-details summary::-webkit-details-marker {\
-							\tdisplay: none;\
-							}\
-							.game-card-details summary::marker {\
-							\tcontent: "";\
-							}\
-							.game-card-details .details-open {\
-							\tdisplay: none;\
-							}\
-							.game-card-details[open] .details-closed {\
-							\tdisplay: none;\
-							}\
-							.game-card-details[open] .details-open {\
-							\tdisplay: inline;\
-							}\
-							.game-card-details p {\
-							\tcolor: rgba(255, 255, 255, 0.88);\
-							\tfont-weight: 700;\
-							\tline-height: 1.45;\
-							\tmargin: 0.85em 0 0 0;\
-							}\
-						</style>');
+					$('head').append(
+						'<style id="unannounced-game-card-styles">' +
+							'.unannounced-game-card .nda-card-art-link {' +
+								'display: block;' +
+								'border: 0 !important;' +
+								'background: #090909;' +
+								'line-height: 0;' +
+								'overflow: hidden;' +
+							'}' +
+							'.unannounced-game-card .nda-disabled-button {' +
+								'cursor: default;' +
+								'opacity: 0.86;' +
+							'}' +
+							'.game-card-details {' +
+								'margin: 0;' +
+								'text-align: left;' +
+							'}' +
+							'.game-card-details summary {' +
+								'cursor: pointer;' +
+								'display: inline-flex;' +
+								'align-items: center;' +
+								'font-family: "Courier New", "Lucida Console", monospace;' +
+								'font-size: 0.78em;' +
+								'font-weight: 700;' +
+								'letter-spacing: 0.14em;' +
+								'line-height: 1;' +
+								'text-transform: uppercase;' +
+								'color: rgba(255, 255, 255, 0.68);' +
+								'border: 0 !important;' +
+								'user-select: none;' +
+							'}' +
+							'.game-card-details summary:hover,' +
+							'.game-card-details summary:focus {' +
+								'color: #ffffff;' +
+							'}' +
+							'.game-card-details summary::-webkit-details-marker {' +
+								'display: none;' +
+							'}' +
+							'.game-card-details summary::marker {' +
+								'content: "";' +
+							'}' +
+							'.game-card-details p {' +
+								'color: rgba(255, 255, 255, 0.88);' +
+								'font-weight: 700;' +
+								'line-height: 1.45;' +
+								'margin: 0.85em 0 0 0;' +
+							'}' +
+						'</style>'
+					);
 				}
 
 				var cards = [
@@ -110,21 +102,18 @@
 						imageAlt: 'DUST: Origins',
 						steam: 'https://store.steampowered.com/app/3804800/DUST_Origins/',
 						trailer: 'https://www.youtube.com/watch?v=IhIOdUs5zlw',
-						summary: 'Level Designer on DUST: Origins, building UE5 gameplay spaces, scripted events, dialogue moments, and combat encounters.',
 						details: 'Designed and implemented levels from concept through completion in Unreal Engine 5, including scripted gameplay events, dialogue, and combat encounters. Iterated gameplay scenarios and combat pacing through testing and feedback.'
 					},
 					{
 						title: 'Isometric ARPG',
 						developer: 'Airship Syndicate',
 						badges: ['Designer'],
-						summary: 'Designer on an unannounced isometric ARPG, building UE5 gameplay spaces, combat encounters, and boss experiences.',
 						details: 'Designed and implemented gameplay spaces, combat encounters, and boss experiences in Unreal Engine 5. Iterated on level flow and combat pacing through testing and feedback.'
 					},
 					{
 						title: 'Open World Survival',
 						developer: 'Airship Syndicate',
 						badges: ['Designer'],
-						summary: 'Designer on an unannounced open world survival project, prototyping world structure, player navigation, and greybox gameplay scenarios.',
 						details: 'Developed level design prototypes exploring world structure, player navigation, and core gameplay concepts. Created greybox environments and gameplay scenarios to validate design direction and support feature development.'
 					}
 				];
@@ -141,19 +130,18 @@
 					var actions = card.image
 						? '<a href="' + card.trailer + '" target="_blank" class="button fit"><i class="fa fa-youtube-play" aria-hidden="true"></i> Trailer</a><a href="' + card.steam + '" target="_blank" class="button fit"><i class="fa fa-steam" aria-hidden="true"></i> Steam</a>'
 						: '<span class="button fit nda-disabled-button"><i class="fa fa-lock" aria-hidden="true"></i> Under NDA</span><a href="images/CameronFullerResume.pdf" target="_blank" class="button fit"><i class="fa fa-file-text" aria-hidden="true"></i> Resume</a>';
-					var description = '<p class="game-card-description">' + card.summary + '</p><details class="game-card-details"><summary><span class="details-closed">[ + DETAILS ]</span><span class="details-open">[ - DETAILS ]</span></summary><p>' + card.details + '</p></details>';
+					var details = '<details class="game-card-details"><summary>[ + DETAILS ]</summary><p>' + card.details + '</p></details>';
 
-					return '\
-						<div class="' + cardClass + '">\
-						\t' + imageMarkup + '\
-						\t<div class="inner">\
-						\t\t<h3>' + card.title + '</h3>\
-						\t\t<p class="game-card-developer">' + card.developer + '</p>\
-						\t\t<div class="game-card-meta">' + badges + '</div>\
-						\t\t<div class="game-card-actions">' + actions + '</div>\
-						\t\t' + description + '\
-						\t</div>\
-						</div>';
+					return '<div class="' + cardClass + '">' +
+						imageMarkup +
+						'<div class="inner">' +
+							'<h3>' + card.title + '</h3>' +
+							'<p class="game-card-developer">' + card.developer + '</p>' +
+							'<div class="game-card-meta">' + badges + '</div>' +
+							'<div class="game-card-actions">' + actions + '</div>' +
+							details +
+						'</div>' +
+					'</div>';
 				}).join('');
 
 				var $wayfinderCard = $thumbs.find('.game-card').first();
@@ -166,22 +154,10 @@
 
 			var addExpandableDescriptions = function() {
 				var staticCardDescriptions = {
-					'Wayfinder': {
-						summary: 'Producer and QA contributor on Wayfinder, coordinating cross-disciplinary teams and helping drive features and content to completion.',
-						details: 'Started as the sole tester and grew into a producer role, coordinating multiple cross-disciplinary teams, tracking work, unblocking dependencies, and helping drive features and content to completion.'
-					},
-					'Ruined King': {
-						summary: 'QA contributor on Ruined King, supporting gameplay validation and release polish for a turn-based RPG.',
-						details: 'Supported QA testing for this turn-based RPG set in the League of Legends universe, helping identify bugs, validate gameplay, and improve release polish.'
-					},
-					'Jar Wars': {
-						summary: 'QA contributor on Jar Wars, supporting multiplayer VR testing, interaction validation, and release polish.',
-						details: 'Supported QA testing for this multiplayer VR title, helping identify bugs, validate gameplay interactions, and improve release polish.'
-					},
-					'Vicious Circle': {
-						summary: 'QA / Production contributor on Vicious Circle, owning multiplayer testing, documentation, bug tracking, and playtest support.',
-						details: 'Owned testing for multiplayer features, built test cases and documentation, created and tracked bugs in JIRA, and supported playtesting and feedback sessions.'
-					}
+					'Wayfinder': 'Started as the sole tester and grew into a producer role, coordinating multiple cross-disciplinary teams, tracking work, unblocking dependencies, and helping drive features and content to completion.',
+					'Ruined King': 'Supported QA testing for this turn-based RPG set in the League of Legends universe, helping identify bugs, validate gameplay, and improve release polish.',
+					'Jar Wars': 'Supported QA testing for this multiplayer VR title, helping identify bugs, validate gameplay interactions, and improve release polish.',
+					'Vicious Circle': 'Owned testing for multiplayer features, built test cases and documentation, created and tracked bugs in JIRA, and supported playtesting and feedback sessions.'
 				};
 
 				$('.thumbnails .game-card').each(function() {
@@ -193,8 +169,7 @@
 					if (!copy || !$description.length || $card.find('.game-card-details').length > 0)
 						return;
 
-					$description.text(copy.summary);
-					$description.after('<details class="game-card-details"><summary><span class="details-closed">[ + DETAILS ]</span><span class="details-open">[ - DETAILS ]</span></summary><p>' + copy.details + '</p></details>');
+					$description.replaceWith('<details class="game-card-details"><summary>[ + DETAILS ]</summary><p>' + copy + '</p></details>');
 				});
 			};
 
