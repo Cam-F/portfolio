@@ -86,6 +86,50 @@
 			margin-bottom: 0.85em;
 		}
 
+		.header-link-row {
+			display: inline-flex;
+			align-items: flex-start;
+			justify-content: center;
+			gap: 1.15em;
+			flex-wrap: nowrap;
+		}
+
+		.header-social-link {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			gap: 0.45em;
+			font-family: "Courier New", "Lucida Console", monospace;
+			font-size: 0.78em;
+			font-weight: 700;
+			line-height: 1;
+			color: rgba(255, 255, 255, 0.74);
+			border: 0 !important;
+			border-bottom: 1px solid transparent !important;
+			box-sizing: border-box;
+			min-height: 1.2em;
+			margin: 0;
+			transform: none;
+		}
+
+		.header-social-link:hover,
+		.header-social-link:focus {
+			color: #ffffff;
+			border: 0 !important;
+			border-bottom: 1px solid transparent !important;
+			transform: none;
+		}
+
+		.header-social-link .fa {
+			font-size: 0.95em;
+			line-height: 1;
+		}
+
+		.header-social-bracket {
+			letter-spacing: 0;
+			line-height: 1;
+		}
+
 		.header-resume-link {
 			display: inline-flex;
 			align-items: center;
@@ -230,8 +274,16 @@
 				letter-spacing: 0.16em;
 			}
 
+			.header-link-row {
+				gap: 0.9em;
+			}
+
+			.header-social-link,
 			.header-resume-link {
 				font-size: 0.72em;
+			}
+
+			.header-resume-link {
 				letter-spacing: 0.14em;
 			}
 		}
@@ -248,14 +300,10 @@
 				<header>
 					<h2 class="label-maker-name">Cameron Fuller</h2>
 					<p class="label-maker-title">Game Designer</p>
-					<a href="images/CameronFullerResume.pdf" target="_blank" class="header-resume-link"><i class="fa fa-file-text" aria-hidden="true"></i> RESUME <i class="fa fa-file-text" aria-hidden="true"></i></a>
-					<div>
-						<!-- <img src="images/1.jpg" id="profPic"> -->
-						<ul class="icons">
-							<li><a href="https://www.linkedin.com/in/cameronmfuller/" target="_blank"
-									class="icon fa-linkedin"></a></li>
-							<li><a href="https://steamcommunity.com/id/CAIVI/" target="_blank" class="icon fa-steam"></a></li>
-						</ul>
+					<div class="header-link-row">
+						<a href="https://www.linkedin.com/in/cameronmfuller/" target="_blank" class="header-social-link" aria-label="LinkedIn"><span class="header-social-bracket">[</span><i class="fa fa-linkedin" aria-hidden="true"></i><span class="header-social-bracket">]</span></a>
+						<a href="images/CameronFullerResume.pdf" target="_blank" class="header-resume-link"><i class="fa fa-file-text" aria-hidden="true"></i> RESUME <i class="fa fa-file-text" aria-hidden="true"></i></a>
+						<a href="https://steamcommunity.com/id/CAIVI/" target="_blank" class="header-social-link" aria-label="Steam"><span class="header-social-bracket">[</span><i class="fa fa-steam" aria-hidden="true"></i><span class="header-social-bracket">]</span></a>
 					</div>
 				</header>
 			</div>
