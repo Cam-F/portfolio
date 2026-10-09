@@ -49,7 +49,9 @@
 							.unannounced-game-card .nda-card-art {\
 							\tposition: relative;\
 							\tdisplay: block;\
-							\theight: 210px;\
+							\twidth: 100%;\
+							\taspect-ratio: 460 / 215;\
+							\theight: auto;\
 							\toverflow: hidden;\
 							\tbackground-color: #090909;\
 							\tbackground-image: repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0px, rgba(255, 255, 255, 0.06) 2px, transparent 2px, transparent 20px), repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.035) 0px, rgba(255, 255, 255, 0.035) 1px, transparent 1px, transparent 7px);\
