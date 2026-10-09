@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="460" height="215" viewBox="0 0 460 215" role="img" aria-labelledby="title desc">
+  <title id="title">Redacted project artwork</title>
+  <desc id="desc">Low-fi black redacted dossier style artwork for confidential projects.</desc>
+  <defs>
+    <pattern id="scanlines" width="1" height="7" patternUnits="userSpaceOnUse">
+      <rect width="1" height="1" fill="rgba(255,255,255,0.055)" />
+    </pattern>
+    <pattern id="diagonal" width="22" height="22" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="3" height="22" fill="rgba(255,255,255,0.055)" />
+    </pattern>
+    <filter id="shadow" x="-20%" y="-30%" width="140%" height="160%">
+      <feDropShadow dx="0" dy="10" stdDeviation="7" flood-color="#000000" flood-opacity="0.45" />
+    </filter>
+  </defs>
+  <rect width="460" height="215" fill="#090909" />
+  <rect width="460" height="215" fill="url(#diagonal)" />
+  <rect width="460" height="215" fill="url(#scanlines)" />
+  <rect x="0" y="0" width="56" height="215" fill="#090909" fill-opacity="0.45" />
+  <rect x="78" y="0" width="125" height="215" fill="#000000" fill-opacity="0.76" />
+  <rect x="239" y="0" width="147" height="215" fill="#000000" fill-opacity="0.76" />
+  <rect x="410" y="0" width="50" height="215" fill="#090909" fill-opacity="0.45" />
+  <rect x="108" y="78" width="244" height="58" rx="2" fill="#050505" stroke="rgba(255,255,255,0.28)" filter="url(#shadow)" />
+  <text x="230" y="116" text-anchor="middle" dominant-baseline="middle" font-family="Courier New, Lucida Console, monospace" font-size="34" font-weight="700" letter-spacing="3" fill="#f5f5f5">REDACTED</text>
+</svg>
