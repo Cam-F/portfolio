@@ -83,7 +83,30 @@
 			text-transform: uppercase;
 			color: rgba(255, 255, 255, 0.72);
 			margin-top: 0.35em;
-			margin-bottom: 1.35em;
+			margin-bottom: 0.85em;
+		}
+
+		.header-resume-link {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.55em;
+			font-family: "Courier New", "Lucida Console", monospace;
+			font-size: 0.78em;
+			font-weight: 700;
+			letter-spacing: 0.18em;
+			text-transform: uppercase;
+			color: rgba(255, 255, 255, 0.74);
+			border-bottom: 0;
+			margin: 0 0 1.2em 0;
+		}
+
+		.header-resume-link:hover {
+			color: #ffffff;
+		}
+
+		.header-resume-link .fa {
+			font-size: 0.95em;
+			letter-spacing: 0;
 		}
 
 		.thumbnails .box.game-card {
@@ -195,6 +218,11 @@
 				font-size: 0.95em;
 				letter-spacing: 0.16em;
 			}
+
+			.header-resume-link {
+				font-size: 0.72em;
+				letter-spacing: 0.14em;
+			}
 		}
 	</style>
 </head>
@@ -209,6 +237,7 @@
 				<header>
 					<h2 class="label-maker-name">Cameron Fuller</h2>
 					<p class="label-maker-title">Game Designer</p>
+					<a href="images/Resume.pdf" target="_blank" class="header-resume-link"><i class="fa fa-file-text" aria-hidden="true"></i> RESUME <i class="fa fa-file-text" aria-hidden="true"></i></a>
 					<div>
 						<!-- <img src="images/1.jpg" id="profPic"> -->
 						<ul class="icons">
@@ -255,7 +284,6 @@
 		<div class="inner">
 			<h2 id="botMarker"></h2>
 			<p>just a guy doing things</p>
-			<a href="images\\Resume.pdf" target="_blank" class="icon fa-file-text"> - Resume</a>
 		</div>
 	</footer>
 
