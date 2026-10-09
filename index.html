@@ -55,59 +55,48 @@
 			max-width: 100%;
 		}
 
-		.game-card .inner {
-			padding: 2.2em 2em 2.35em;
-		}
-
-		.game-card-header {
-			display: flex;
-			align-items: center;
-			gap: 1.5em;
-			margin-bottom: 1.9em;
-			text-align: left;
-		}
-
-		.game-card-thumb {
-			display: block;
-			flex: 0 0 126px;
-		}
-
-		.game-card-thumb img {
+		.game-card .image.game-card-main-image img {
 			display: block;
 			width: 100%;
 			height: auto;
-			border-radius: 4px;
+			min-height: 0;
+			max-height: none;
+			object-fit: cover;
 		}
 
-		.game-card-heading {
-			flex: 1;
-			text-align: left;
+		.game-card .inner {
+			padding: 2em 2em 2.35em;
 		}
 
-		.game-card-heading h3 {
-			font-size: 1.35em;
+		.game-card h3 {
+			font-size: 1.45em;
 			margin: 0 0 0.45em 0;
 		}
 
-		.game-card-year {
+		.game-card-developer {
+			color: rgba(255, 255, 255, 0.86);
+			font-weight: 700;
+			margin: 0 0 0.25em 0;
+		}
+
+		.game-card-date {
 			font-family: "Courier New", "Lucida Console", monospace;
 			font-weight: 700;
 			letter-spacing: 0.05em;
 			color: #f5f5f5;
-			margin: 0;
+			margin: 0 0 0.95em 0;
 		}
 
 		.game-card-role {
-			font-size: 1.1em;
+			font-size: 1.05em;
 			font-weight: 700;
 			color: #f5f5f5;
-			margin: 0 0 1.5em 0;
-			text-align: center;
+			margin: 0 0 1.35em 0;
 		}
 
 		.game-card-actions {
 			max-width: 280px;
-			margin: 0 auto 2em auto;
+			margin: 0 auto 1.85em auto;
 		}
 
 		.game-card-actions .button {
@@ -131,14 +120,6 @@
 			.label-maker-title {
 				font-size: 0.95em;
 				letter-spacing: 0.16em;
-			}
-
-			.game-card-header {
-				gap: 1em;
-			}
-
-			.game-card-thumb {
-				flex-basis: 110px;
 			}
 		}
 	</style>
@@ -173,15 +154,12 @@
 			<div class="thumbnails">
 
 				<div class="box game-card">
+					<a href="https://www.games.roosterteeth.com/viciouscircle" target="_blank" class="image fit game-card-main-image"><img
+							src="images/VC.jpg" alt="Vicious Circle" /></a>
 					<div class="inner">
-						<div class="game-card-header">
-							<a href="https://www.games.roosterteeth.com/viciouscircle" target="_blank" class="game-card-thumb"><img
-									src="images/VC.jpg" alt="Vicious Circle" /></a>
-							<div class="game-card-heading">
-								<h3>Vicious Circle</h3>
-								<p class="game-card-year">2019</p>
-							</div>
-						</div>
+						<h3>Vicious Circle</h3>
+						<p class="game-card-developer">Rooster Teeth Games</p>
+						<p class="game-card-date">2019</p>
 						<p class="game-card-role">QA // Production</p>
 						<div class="game-card-actions">
 							<a href="https://www.youtube.com/watch?v=4lbWPhdU1Us" target="_blank" class="button fit">RTX
@@ -189,7 +167,7 @@
 							<a href="https://www.gamespot.com/articles/rooster-teeths-vicious-circle-is-a-mario-kart-like/1100-6468204/"
 								target="_blank" class="button fit">Gamespot Article</a>
 						</div>
-						<p class="game-card-description">Owned testing for many multiplayer features, created test cases and documentation, created and tracked bugs in JIRA, and provided support for playtesting and feedback sessions.</p>
+						<p class="game-card-description">Owned testing for multiplayer features, created test cases and documentation, created and tracked bugs in JIRA, and supported playtesting and feedback sessions.</p>
 					</div>
 				</div>
 
