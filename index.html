@@ -201,19 +201,22 @@
 
 		.game-card-meta {
 			display: flex;
+			align-items: center;
 			justify-content: center;
 			gap: 0.7em;
-			flex-wrap: wrap;
+			flex-wrap: nowrap;
 			margin: 0 0 1.65em 0;
 		}
 
 		.game-card-meta-pill {
 			display: inline-block;
+			flex: 0 0 auto;
 			font-family: "Courier New", "Lucida Console", monospace;
 			font-size: 0.9em;
 			font-weight: 700;
 			letter-spacing: 0.05em;
 			line-height: 1;
+			white-space: nowrap;
 			color: #f5f5f5;
 			background: #070707;
 			border: 1px solid rgba(255, 255, 255, 0.16);
@@ -286,6 +289,16 @@
 			.header-resume-link {
 				letter-spacing: 0.14em;
 			}
+
+			.game-card-meta {
+				gap: 0.45em;
+			}
+
+			.game-card-meta-pill {
+				font-size: 0.78em;
+				letter-spacing: 0.03em;
+				padding: 0.55em 0.6em;
+			}
 		}
 	</style>
 </head>
@@ -322,8 +335,9 @@
 						<h3>Wayfinder</h3>
 						<p class="game-card-developer">Airship Syndicate</p>
 						<div class="game-card-meta">
-							<span class="game-card-meta-pill">QA // Production</span>
-							<span class="game-card-meta-pill">2023 - 2024</span>
+							<span class="game-card-meta-pill">Producer</span>
+							<span class="game-card-meta-pill">QA</span>
+							<span class="game-card-meta-pill">2024</span>
 						</div>
 						<div class="game-card-actions">
 							<a href="https://www.youtube.com/watch?v=FdQcr1GYJhY" target="_blank" class="button fit"><i class="fa fa-youtube-play" aria-hidden="true"></i> Trailer</a>
