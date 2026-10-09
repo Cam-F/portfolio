@@ -89,24 +89,35 @@
 		.header-resume-link {
 			display: inline-flex;
 			align-items: center;
+			justify-content: center;
 			gap: 0.55em;
 			font-family: "Courier New", "Lucida Console", monospace;
 			font-size: 0.78em;
 			font-weight: 700;
 			letter-spacing: 0.18em;
+			line-height: 1;
 			text-transform: uppercase;
 			color: rgba(255, 255, 255, 0.74);
-			border-bottom: 0;
+			border: 0 !important;
+			border-bottom: 1px solid transparent !important;
+			box-sizing: border-box;
+			min-height: 1.2em;
 			margin: 0 0 1.2em 0;
+			transform: none;
 		}
 
-		.header-resume-link:hover {
+		.header-resume-link:hover,
+		.header-resume-link:focus {
 			color: #ffffff;
+			border: 0 !important;
+			border-bottom: 1px solid transparent !important;
+			transform: none;
 		}
 
 		.header-resume-link .fa {
 			font-size: 0.95em;
 			letter-spacing: 0;
+			line-height: 1;
 		}
 
 		.thumbnails .box.game-card {
