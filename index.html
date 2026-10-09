@@ -9,6 +9,59 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<link rel="stylesheet" href="assets/css/main.css" />
 	<link rel="shortcut icon" type="image/png" href="images/favicon.png" />
+	<style>
+		.label-maker-name {
+			font-family: "Courier New", "Lucida Console", monospace;
+			font-size: 3em;
+			font-weight: 700;
+			letter-spacing: 0.12em;
+			text-transform: uppercase;
+			display: inline-block;
+			color: #f5f5f5;
+			background: #050505;
+			padding: 0.12em 0.5em;
+			margin-bottom: 0.35em;
+			border-radius: 3px;
+			border: 1px solid rgba(255, 255, 255, 0.12);
+			box-shadow:
+				0 10px 22px rgba(0, 0, 0, 0.45),
+				inset 0 1px 0 rgba(255, 255, 255, 0.16),
+				inset 0 -2px 0 rgba(0, 0, 0, 0.8);
+			text-shadow:
+				0 1px 0 #000,
+				0 0 2px rgba(255, 255, 255, 0.35);
+			background-image:
+				repeating-linear-gradient(
+					0deg,
+					rgba(255, 255, 255, 0.035) 0px,
+					rgba(255, 255, 255, 0.035) 1px,
+					transparent 1px,
+					transparent 7px
+				);
+		}
+
+		.label-maker-title {
+			font-family: "Courier New", "Lucida Console", monospace;
+			font-size: 1.15em;
+			letter-spacing: 0.22em;
+			text-transform: uppercase;
+			color: rgba(255, 255, 255, 0.72);
+			margin-top: 0.35em;
+			margin-bottom: 1.35em;
+		}
+
+		@media screen and (max-width: 736px) {
+			.label-maker-name {
+				font-size: 2em;
+				letter-spacing: 0.08em;
+			}
+
+			.label-maker-title {
+				font-size: 0.95em;
+				letter-spacing: 0.16em;
+			}
+		}
+	</style>
 </head>
 
 <body id="top">
@@ -19,8 +72,8 @@
 		<section id="banner">
 			<div class="inner">
 				<header>
-					<h2>Cameron Fuller</h2>
-					<p style="font-size: 1.45em; margin-top: -1.25em; margin-bottom: 1.35em; color: rgba(255, 255, 255, 0.75); letter-spacing: 0.08em; text-transform: uppercase;">Game Designer</p>
+					<h2 class="label-maker-name">Cameron Fuller</h2>
+					<p class="label-maker-title">Game Designer</p>
 					<div>
 						<!-- <img src="images/1.jpg" id="profPic"> -->
 						<ul class="icons">
