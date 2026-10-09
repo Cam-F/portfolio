@@ -32,7 +32,7 @@
 			$('form').placeholder();
 
 		// Footer version marker.
-			$('.site-version').text('V34');
+			$('.site-version').text('V35');
 
 		// Add script-injected portfolio project cards.
 			var addUnannouncedCards = function() {
@@ -66,7 +66,7 @@
 						image: 'images/Dust.jpg',
 						imageAlt: 'DUST: Origins',
 						steam: 'https://store.steampowered.com/app/3804800/DUST_Origins/',
-						trailer: 'https://www.youtube.com/watch?v=GVVWa41WZQs',
+						trailer: 'https://www.youtube.com/watch?v=IhIOdUs5zlw',
 						description: 'Designed and implemented levels from concept through completion in Unreal Engine 5, including scripted gameplay events, dialogue, and combat encounters. Iterated gameplay scenarios and combat pacing through testing and feedback.'
 					},
 					{
