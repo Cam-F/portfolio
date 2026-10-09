@@ -32,7 +32,7 @@
 			$('form').placeholder();
 
 		// Footer version marker.
-			$('.site-version').text('V37');
+			$('.site-version').text('V38');
 
 		// Add script-injected portfolio project cards.
 			var addUnannouncedCards = function() {
@@ -57,7 +57,7 @@
 							'}' +
 							'.game-card-details {' +
 								'margin: 0;' +
-								'text-align: left;' +
+								'text-align: center;' +
 							'}' +
 							'.game-card-details summary {' +
 								'cursor: pointer;' +
@@ -88,6 +88,7 @@
 								'font-weight: 700;' +
 								'line-height: 1.45;' +
 								'margin: 0.85em 0 0 0;' +
+								'text-align: left;' +
 							'}' +
 						'</style>'
 					);
