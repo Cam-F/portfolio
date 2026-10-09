@@ -32,9 +32,9 @@
 			$('form').placeholder();
 
 		// Footer version marker.
-			$('.site-version').text('V33');
+			$('.site-version').text('V34');
 
-		// Add NDA-safe unannounced project cards.
+		// Add script-injected portfolio project cards.
 			var addUnannouncedCards = function() {
 				var $thumbs = $('.thumbnails');
 
@@ -61,16 +61,23 @@
 				var cards = [
 					{
 						title: 'DUST: Origins',
+						developer: 'Airship Syndicate',
 						badges: ['Designer', '2024 - Present'],
+						image: 'images/Dust.jpg',
+						imageAlt: 'DUST: Origins',
+						steam: 'https://store.steampowered.com/app/3804800/DUST_Origins/',
+						trailer: 'https://www.youtube.com/watch?v=GVVWa41WZQs',
 						description: 'Designed and implemented levels from concept through completion in Unreal Engine 5, including scripted gameplay events, dialogue, and combat encounters. Iterated gameplay scenarios and combat pacing through testing and feedback.'
 					},
 					{
 						title: 'Isometric ARPG',
+						developer: 'Airship Syndicate',
 						badges: ['Designer'],
 						description: 'Designed and implemented gameplay spaces, combat encounters, and boss experiences in Unreal Engine 5. Iterated on level flow and combat pacing through testing and feedback.'
 					},
 					{
 						title: 'Open World Survival',
+						developer: 'Airship Syndicate',
 						badges: ['Designer'],
 						description: 'Developed level design prototypes exploring world structure, player navigation, and core gameplay concepts. Created greybox environments and gameplay scenarios to validate design direction and support feature development.'
 					}
@@ -81,17 +88,22 @@
 						return '<span class="game-card-meta-pill">' + badge + '</span>';
 					}).join('');
 
+					var cardClass = card.image ? 'box game-card dust-game-card' : 'box game-card unannounced-game-card';
+					var imageMarkup = card.image
+						? '<a href="' + card.steam + '" target="_blank" class="image fit game-card-main-image"><img src="' + card.image + '" alt="' + card.imageAlt + '" /></a>'
+						: '<a href="images/CameronFullerResume.pdf" target="_blank" class="image fit game-card-main-image nda-card-art-link" aria-label="Resume details for unannounced project"><img src="images/redacted-card.svg" alt="Redacted project artwork" /></a>';
+					var actions = card.image
+						? '<a href="' + card.trailer + '" target="_blank" class="button fit"><i class="fa fa-youtube-play" aria-hidden="true"></i> Trailer</a><a href="' + card.steam + '" target="_blank" class="button fit"><i class="fa fa-steam" aria-hidden="true"></i> Steam</a>'
+						: '<span class="button fit nda-disabled-button"><i class="fa fa-lock" aria-hidden="true"></i> Under NDA</span><a href="images/CameronFullerResume.pdf" target="_blank" class="button fit"><i class="fa fa-file-text" aria-hidden="true"></i> Resume</a>';
+
 					return '\
-						<div class="box game-card unannounced-game-card">\
-						\t<a href="images/CameronFullerResume.pdf" target="_blank" class="image fit game-card-main-image nda-card-art-link" aria-label="Resume details for unannounced project"><img src="images/redacted-card.svg" alt="Redacted project artwork" /></a>\
+						<div class="' + cardClass + '">\
+						\t' + imageMarkup + '\
 						\t<div class="inner">\
 						\t\t<h3>' + card.title + '</h3>\
-						\t\t<p class="game-card-developer">Airship Syndicate</p>\
+						\t\t<p class="game-card-developer">' + card.developer + '</p>\
 						\t\t<div class="game-card-meta">' + badges + '</div>\
-						\t\t<div class="game-card-actions">\
-						\t\t\t<span class="button fit nda-disabled-button"><i class="fa fa-lock" aria-hidden="true"></i> Under NDA</span>\
-						\t\t\t<a href="images/CameronFullerResume.pdf" target="_blank" class="button fit"><i class="fa fa-file-text" aria-hidden="true"></i> Resume</a>\
-						\t\t</div>\
+						\t\t<div class="game-card-actions">' + actions + '</div>\
 						\t\t<p class="game-card-description">' + card.description + '</p>\
 						\t</div>\
 						</div>';
