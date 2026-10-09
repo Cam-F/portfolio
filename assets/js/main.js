@@ -32,7 +32,7 @@
 			$('form').placeholder();
 
 		// Footer version marker.
-			$('.site-version').text('V32');
+			$('.site-version').text('V33');
 
 		// Add NDA-safe unannounced project cards.
 			var addUnannouncedCards = function() {
@@ -59,6 +59,11 @@
 				}
 
 				var cards = [
+					{
+						title: 'DUST: Origins',
+						badges: ['Designer', '2024 - Present'],
+						description: 'Designed and implemented levels from concept through completion in Unreal Engine 5, including scripted gameplay events, dialogue, and combat encounters. Iterated gameplay scenarios and combat pacing through testing and feedback.'
+					},
 					{
 						title: 'Isometric ARPG',
 						badges: ['Designer'],
