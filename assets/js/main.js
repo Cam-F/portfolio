@@ -88,12 +88,12 @@
 					{
 						title: 'Isometric ARPG',
 						badges: ['Designer'],
-						description: 'Designed gameplay and encounter content for an unannounced project, collaborating across design, art, engineering, VFX, audio, and production while staying NDA-safe.'
+						description: 'Designed and implemented gameplay spaces, combat encounters, and boss experiences in Unreal Engine 5. Iterated on level flow and combat pacing through testing and feedback.'
 					},
 					{
 						title: 'Open World Survival',
 						badges: ['Designer'],
-						description: 'Supported levels, systems, characters, weapons, enemies, and live/event content for an unannounced project, helping drive implementation from concept through iteration.'
+						description: 'Developed level design prototypes exploring world structure, player navigation, and core gameplay concepts. Created greybox environments and gameplay scenarios to validate design direction and support feature development.'
 					}
 				];
 
