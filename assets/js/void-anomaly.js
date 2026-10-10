@@ -7,7 +7,7 @@
 			finePointerQuery = window.matchMedia('(hover: hover) and (pointer: fine)');
 
 		// Footer version marker.
-		$('.site-version').text('V62');
+		$('.site-version').text('V63');
 
 		if ($('#thermal-cursor-trail').length > 0 || reducedMotionQuery.matches || !finePointerQuery.matches)
 			return;
@@ -25,7 +25,7 @@
 					'mix-blend-mode: screen;' +
 					'image-rendering: pixelated;' +
 					'image-rendering: crisp-edges;' +
-					'filter: saturate(1.5) contrast(1.1) brightness(1.04);' +
+					'filter: saturate(1.45) contrast(1.08) brightness(1.04);' +
 				'}' +
 				'#main,' +
 				'#footer {' +
@@ -45,8 +45,9 @@
 			context = canvas.getContext('2d', { alpha: true }),
 			cells = {},
 			targetPoint = null,
-			trailPoint = null,
+			heatPoint = null,
 			lastPointerPoint = null,
+			lastStampPoint = null,
 			lastPointerMoveTime = 0,
 			lastStampTime = 0,
 			lastFrameTime = 0,
@@ -54,10 +55,10 @@
 			dwellSeconds = 0,
 			isVisible = true,
 			cellSize = 5,
-			stampInterval = 74,
-			followEase = 0.11,
-			decayPerSecond = 0.56,
-			maxHeat = 4.45,
+			stampInterval = 34,
+			followEase = 0.18,
+			decayPerSecond = 0.58,
+			maxHeat = 5.4,
 			deviceScale = 1;
 
 		canvas.id = 'thermal-cursor-trail';
@@ -75,6 +76,13 @@
 		var cellNoise = function(x, y, salt) {
 			var n = Math.sin((x * 12.9898) + (y * 78.233) + ((salt || 0) * 37.719)) * 43758.5453;
 			return n - Math.floor(n);
+		};
+
+		var distanceBetween = function(a, b) {
+			if (!a || !b)
+				return 0;
+
+			return Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
 		};
 
 		var resizeCanvas = function() {
@@ -131,7 +139,7 @@
 					if (!cell)
 						continue;
 
-					weight = Math.pow(1 - (distance / radius), 1.6);
+					weight = Math.pow(1 - (distance / Math.max(radius, 1)), 1.2);
 					totalHeat += clamp(cell.heat / maxHeat, 0, 1) * weight;
 					totalWeight += weight;
 				}
@@ -143,12 +151,12 @@
 			return clamp(totalHeat / totalWeight, 0, 1);
 		};
 
-		var stampHeat = function(x, y, strength, intensityAmount, pathAmount) {
+		var stampHeat = function(x, y, strength, intensityAmount) {
 			var baseX = Math.floor(x / cellSize),
 				baseY = Math.floor(y / cellSize),
-				radius = Math.round(5 + (intensityAmount * 6) + (pathAmount * 3)),
-				coreRadius = 0.62 + (intensityAmount * 1.15) + (pathAmount * 0.5),
-				stampSalt = Math.floor(performance.now() / 230),
+				radius = Math.round(5 + (intensityAmount * 6)),
+				coreRadius = 0.75 + (intensityAmount * 1.35),
+				stampSalt = Math.floor(performance.now() / 360),
 				cellX,
 				cellY,
 				dx,
@@ -156,30 +164,28 @@
 				distance,
 				shapeNoise,
 				localRadius,
+				edge,
 				falloff,
-				speckle,
-				coreBoost;
+				variance;
 
 			for (cellY = baseY - radius; cellY <= baseY + radius; cellY++) {
 				for (cellX = baseX - radius; cellX <= baseX + radius; cellX++) {
 					dx = cellX - baseX;
 					dy = cellY - baseY;
 					shapeNoise = cellNoise(cellX, cellY, stampSalt);
-					localRadius = radius * (0.55 + (shapeNoise * 0.52) + (intensityAmount * 0.12) + (pathAmount * 0.18));
-					distance = Math.sqrt((dx * dx * (0.84 + (shapeNoise * 0.22))) + (dy * dy * (1.08 - (shapeNoise * 0.18))));
+					localRadius = radius * (0.88 + (shapeNoise * 0.18));
+					distance = Math.sqrt((dx * dx * 0.96) + (dy * dy * 1.04));
+					edge = 1 - (distance / Math.max(localRadius, 1));
 
-					if (distance > localRadius)
+					if (edge <= 0)
 						continue;
 
-					if (distance > coreRadius && shapeNoise < (0.16 + (distance / Math.max(radius, 1)) * 0.19))
-						continue;
+					variance = 0.88 + (cellNoise(cellX, cellY, stampSalt + 4) * 0.2);
 
-					if (distance <= coreRadius && Math.abs(dx) + Math.abs(dy) <= 1 + Math.round(intensityAmount + pathAmount)) {
-						coreBoost = 1.2 + (intensityAmount * 1.35) + (pathAmount * 1.25) + (shapeNoise * 0.28);
-						falloff = coreBoost;
+					if (distance <= coreRadius) {
+						falloff = (1.1 + (intensityAmount * 1.15)) * variance;
 					} else {
-						speckle = 0.38 + (cellNoise(cellX, cellY, stampSalt + 4) * 0.82);
-						falloff = Math.pow(1 - (distance / localRadius), 2.55) * speckle * (0.46 + (intensityAmount * 0.7) + (pathAmount * 0.74));
+						falloff = Math.pow(edge, 1.38) * (0.72 + (intensityAmount * 0.46)) * variance;
 					}
 
 					addHeatToCell(cellX, cellY, strength * falloff);
@@ -187,22 +193,45 @@
 			}
 		};
 
+		var stampLine = function(fromPoint, toPoint, strength, intensityAmount) {
+			var distance = distanceBetween(fromPoint, toPoint),
+				steps = clamp(Math.ceil(distance / (cellSize * 1.4)), 1, 28),
+				i,
+				progress,
+				x,
+				y,
+				pathHeat,
+				localStrength,
+				localIntensity;
+
+			for (i = 1; i <= steps; i++) {
+				progress = i / steps;
+				x = fromPoint.x + ((toPoint.x - fromPoint.x) * progress);
+				y = fromPoint.y + ((toPoint.y - fromPoint.y) * progress);
+				pathHeat = sampleHeatAround(x, y, 7);
+				localStrength = strength + (pathHeat * 0.24);
+				localIntensity = clamp(intensityAmount + (pathHeat * 0.44), 0.08, 1);
+
+				stampHeat(x, y, localStrength, localIntensity);
+			}
+		};
+
 		var heatColor = function(heat) {
 			heat = clamp(heat, 0, 1);
 
 			if (heat > 0.82)
-				return 'rgba(5, 28, 255, ' + (0.36 + heat * 0.55) + ')';
+				return 'rgba(4, 26, 255, ' + (0.34 + heat * 0.56) + ')';
 
 			if (heat > 0.62)
-				return 'rgba(0, 60, 225, ' + (0.28 + heat * 0.48) + ')';
+				return 'rgba(0, 62, 230, ' + (0.27 + heat * 0.48) + ')';
 
 			if (heat > 0.42)
-				return 'rgba(0, 102, 205, ' + (0.21 + heat * 0.4) + ')';
+				return 'rgba(0, 104, 210, ' + (0.2 + heat * 0.4) + ')';
 
 			if (heat > 0.22)
-				return 'rgba(0, 153, 225, ' + (0.14 + heat * 0.33) + ')';
+				return 'rgba(0, 155, 226, ' + (0.14 + heat * 0.33) + ')';
 
-			return 'rgba(44, 210, 255, ' + (0.07 + heat * 0.22) + ')';
+			return 'rgba(48, 212, 255, ' + (0.07 + heat * 0.22) + ')';
 		};
 
 		var drawCells = function(deltaSeconds) {
@@ -223,11 +252,11 @@
 				cell = cells[key];
 				cell.heat *= Math.pow(decayPerSecond, deltaSeconds);
 
-				if (cell.heat < 0.014)
+				if (cell.heat < 0.012)
 					continue;
 
 				normalizedHeat = clamp(cell.heat / maxHeat, 0, 1);
-				gap = normalizedHeat > 0.78 ? 0 : 1;
+				gap = normalizedHeat > 0.74 ? 0 : 1;
 				size = Math.max(1, Math.ceil((cellSize - gap) * deviceScale));
 
 				context.fillStyle = heatColor(normalizedHeat);
@@ -244,66 +273,59 @@
 			cells = activeCells;
 		};
 
-		var updateTrailPoint = function(now, deltaSeconds) {
+		var updateHeatPoint = function(now, deltaSeconds) {
 			var dx,
 				dy,
 				distanceToTarget,
 				idleMilliseconds,
 				isSettling,
 				dwellAmount,
-				movingAmount,
-				pathAmount,
+				movementAmount,
+				existingHeat,
 				strength,
-				intensityAmount;
+				intensityAmount,
+				movedSinceStamp;
 
 			if (!targetPoint)
 				return;
 
-			pointerSpeed *= Math.pow(0.09, deltaSeconds);
+			pointerSpeed *= Math.pow(0.12, deltaSeconds);
 
-			if (!trailPoint) {
-				trailPoint = { x: targetPoint.x, y: targetPoint.y };
+			if (!heatPoint) {
+				heatPoint = { x: targetPoint.x, y: targetPoint.y };
+				lastStampPoint = { x: heatPoint.x, y: heatPoint.y };
 				lastStampTime = now;
 			}
 
-			dx = targetPoint.x - trailPoint.x;
-			dy = targetPoint.y - trailPoint.y;
+			dx = targetPoint.x - heatPoint.x;
+			dy = targetPoint.y - heatPoint.y;
 			distanceToTarget = Math.sqrt((dx * dx) + (dy * dy));
 			idleMilliseconds = now - lastPointerMoveTime;
-			isSettling = distanceToTarget < 3.5 && (pointerSpeed < 0.1 || idleMilliseconds > 150);
+			isSettling = distanceToTarget < 2.8 && (pointerSpeed < 0.08 || idleMilliseconds > 170);
 
-			trailPoint.x += dx * followEase;
-			trailPoint.y += dy * followEase;
+			heatPoint.x += dx * followEase;
+			heatPoint.y += dy * followEase;
 
 			if (isSettling) {
-				dwellSeconds = clamp(dwellSeconds + (deltaSeconds * 0.62), 0, 1.9);
+				dwellSeconds = clamp(dwellSeconds + (deltaSeconds * 0.48), 0, 2.2);
 			} else {
-				dwellSeconds = clamp(dwellSeconds - (deltaSeconds * 1.85), 0, 1.9);
+				dwellSeconds = clamp(dwellSeconds - (deltaSeconds * 1.25), 0, 2.2);
 			}
 
-			if (now - lastStampTime < stampInterval)
+			existingHeat = sampleHeatAround(heatPoint.x, heatPoint.y, 7);
+			dwellAmount = clamp((dwellSeconds - 0.32) / 1.55, 0, 1);
+			movementAmount = clamp(pointerSpeed / 1.35, 0, 1);
+			movedSinceStamp = distanceBetween(lastStampPoint, heatPoint);
+
+			if (now - lastStampTime < stampInterval && movedSinceStamp < (cellSize * 1.65))
 				return;
 
-			pathAmount = sampleHeatAround(trailPoint.x, trailPoint.y, 7);
-			dwellAmount = clamp((dwellSeconds - 0.22) / 1.36, 0, 1);
-			movingAmount = clamp(pointerSpeed / 1.3, 0, 1);
+			strength = 0.055 + ((1 - movementAmount) * 0.055) + (existingHeat * 0.2) + (dwellAmount * 0.42);
+			intensityAmount = clamp(0.08 + (existingHeat * 0.4) + (dwellAmount * 0.72), 0.08, 1);
 
-			if (dwellAmount > 0.05) {
-				strength = 0.28 + (dwellAmount * 1.38) + (pathAmount * 0.42);
-			} else {
-				strength = 0.06 + ((1 - movingAmount) * 0.08) + (pathAmount * 0.78);
-			}
+			stampLine(lastStampPoint || heatPoint, heatPoint, strength, intensityAmount);
 
-			intensityAmount = clamp(0.08 + (dwellAmount * 0.8) + (pathAmount * 0.42), 0.08, 1);
-
-			stampHeat(
-				trailPoint.x,
-				trailPoint.y,
-				strength,
-				intensityAmount,
-				pathAmount
-			);
-
+			lastStampPoint = { x: heatPoint.x, y: heatPoint.y };
 			lastStampTime = now;
 		};
 
@@ -317,7 +339,7 @@
 				return;
 			}
 
-			updateTrailPoint(now, deltaSeconds);
+			updateHeatPoint(now, deltaSeconds);
 			drawCells(deltaSeconds);
 
 			window.requestAnimationFrame(render);
@@ -337,10 +359,7 @@
 			if (lastPointerPoint) {
 				deltaTime = Math.max(now - lastPointerMoveTime, 1);
 				distance = Math.sqrt(Math.pow(x - lastPointerPoint.x, 2) + Math.pow(y - lastPointerPoint.y, 2));
-				pointerSpeed = (pointerSpeed * 0.45) + ((distance / deltaTime) * 0.55);
-
-				if (distance > 4)
-					dwellSeconds = Math.max(0, dwellSeconds - 0.22);
+				pointerSpeed = (pointerSpeed * 0.48) + ((distance / deltaTime) * 0.52);
 			} else {
 				pointerSpeed = 0;
 			}
@@ -356,8 +375,9 @@
 
 		var handlePointerLeave = function() {
 			targetPoint = null;
-			trailPoint = null;
+			heatPoint = null;
 			lastPointerPoint = null;
+			lastStampPoint = null;
 			pointerSpeed = 0;
 			dwellSeconds = 0;
 		};
@@ -368,8 +388,9 @@
 			if (!isVisible) {
 				cells = {};
 				targetPoint = null;
-				trailPoint = null;
+				heatPoint = null;
 				lastPointerPoint = null;
+				lastStampPoint = null;
 				pointerSpeed = 0;
 				dwellSeconds = 0;
 				context.clearRect(0, 0, canvas.width, canvas.height);
