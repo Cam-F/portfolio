@@ -7,7 +7,7 @@
 			finePointerQuery = window.matchMedia('(hover: hover) and (pointer: fine)');
 
 		// Footer version marker.
-		$('.site-version').text('V65');
+		$('.site-version').text('V66');
 
 		if ($('#thermal-cursor-trail').length > 0 || reducedMotionQuery.matches || !finePointerQuery.matches)
 			return;
@@ -59,7 +59,8 @@
 			followEase = 0.18,
 			decayPerSecond = 0.58,
 			maxHeat = 5.4,
-			deviceScale = 1;
+			deviceScale = 1,
+			TWO_PI = Math.PI * 2;
 
 		canvas.id = 'thermal-cursor-trail';
 		canvas.setAttribute('aria-hidden', 'true');
@@ -84,6 +85,27 @@
 				y - Math.floor(now * 0.003),
 				salt
 			);
+		};
+
+		var legEdgeContribution = function(x, y, mainRadius, legAngle, legLength, legWidth, strengthScale) {
+			var forward = (x * Math.cos(legAngle)) + (y * Math.sin(legAngle)),
+				side = Math.abs((-x * Math.sin(legAngle)) + (y * Math.cos(legAngle))),
+				start = mainRadius * 0.54,
+				end = mainRadius + legLength,
+				progress,
+				width,
+				sideEdge,
+				tipEdge;
+
+			if (forward < start || forward > end)
+				return -1;
+
+			progress = (forward - start) / Math.max(end - start, 0.001);
+			width = legWidth * (1 - (progress * 0.58));
+			sideEdge = 1 - (side / Math.max(width, 0.001));
+			tipEdge = 1 - (Math.abs(progress - 0.48) / 0.58);
+
+			return Math.min(sideEdge, tipEdge) * strengthScale;
 		};
 
 		var distanceBetween = function(a, b) {
@@ -167,19 +189,16 @@
 		var stampHeat = function(x, y, strength, intensityAmount, now) {
 			var baseX = Math.floor(x / cellSize),
 				baseY = Math.floor(y / cellSize),
-				radius = Math.round(5 + (intensityAmount * 6.8)),
-				coreRadius = 0.68 + (intensityAmount * 1.18),
-				stampSalt = Math.floor(now / 410),
-				lobeAngle = (cellNoise(baseX, baseY, stampSalt + 31) * Math.PI * 2) + (now * 0.0017),
-				lobeDistanceA = radius * (0.22 + (intensityAmount * 0.16)),
-				lobeDistanceB = radius * (0.17 + (intensityAmount * 0.12)),
-				lobeAX = Math.cos(lobeAngle) * lobeDistanceA,
-				lobeAY = Math.sin(lobeAngle) * lobeDistanceA,
-				lobeBX = Math.cos(lobeAngle + 2.25) * lobeDistanceB,
-				lobeBY = Math.sin(lobeAngle + 2.25) * lobeDistanceB,
-				stretchX = 0.82 + (cellNoise(baseX, baseY, stampSalt + 12) * 0.36),
-				stretchY = 1.18 - (cellNoise(baseX, baseY, stampSalt + 18) * 0.32),
-				shear = (cellNoise(baseX, baseY, stampSalt + 24) - 0.5) * (0.34 + (intensityAmount * 0.32)),
+				radius = Math.round(4 + (intensityAmount * 6.1)),
+				coreRadius = 0.58 + (intensityAmount * 1.05),
+				stampSalt = Math.floor(now / 430),
+				legSeed = cellNoise(baseX, baseY, stampSalt + 31),
+				legAngleA = (legSeed * TWO_PI) + (now * 0.0014),
+				legAngleB = legAngleA + 2.12 + (cellNoise(baseX, baseY, stampSalt + 39) * 0.58),
+				legAngleC = legAngleA - 2.42 + (cellNoise(baseX, baseY, stampSalt + 47) * 0.5),
+				stretchX = 0.72 + (cellNoise(baseX, baseY, stampSalt + 12) * 0.5),
+				stretchY = 1.3 - (cellNoise(baseX, baseY, stampSalt + 18) * 0.42),
+				shear = (cellNoise(baseX, baseY, stampSalt + 24) - 0.5) * (0.42 + (intensityAmount * 0.44)),
 				cellX,
 				cellY,
 				dx,
@@ -187,65 +206,94 @@
 				warpedX,
 				warpedY,
 				angle,
-				mainDistance,
-				lobeDistanceOne,
-				lobeDistanceTwo,
+				sector,
 				shapeNoise,
 				edgeNoise,
-				edgeWobble,
+				facetNoise,
+				facetStep,
+				facetedDistance,
 				mainRadius,
-				lobeRadiusA,
-				lobeRadiusB,
 				mainEdge,
-				lobeEdgeA,
-				lobeEdgeB,
+				legA,
+				legB,
+				legC,
+				legEdge,
 				edge,
+				isLeg,
 				falloff,
 				variance;
 
-			for (cellY = baseY - radius - 4; cellY <= baseY + radius + 4; cellY++) {
-				for (cellX = baseX - radius - 4; cellX <= baseX + radius + 4; cellX++) {
+			for (cellY = baseY - radius - 7; cellY <= baseY + radius + 7; cellY++) {
+				for (cellX = baseX - radius - 7; cellX <= baseX + radius + 7; cellX++) {
 					dx = cellX - baseX;
 					dy = cellY - baseY;
-					angle = Math.atan2(dy, dx);
 					shapeNoise = cellNoise(cellX, cellY, stampSalt);
 					edgeNoise = animatedNoise(cellX, cellY, now, 17);
 
 					warpedX = (dx * stretchX) + (dy * shear);
-					warpedY = (dy * stretchY) + (Math.sin((dx * 0.5) + (now * 0.003)) * (0.18 + (intensityAmount * 0.26)));
+					warpedY = (dy * stretchY) + (Math.sin((dx * 0.64) + (now * 0.0032)) * (0.2 + (intensityAmount * 0.28)));
+					angle = (Math.atan2(warpedY, warpedX) + TWO_PI) % TWO_PI;
+					sector = Math.floor(angle / (TWO_PI / 9));
+					facetNoise = cellNoise(sector, stampSalt, 61);
+					facetStep = ((sector % 2 === 0) ? 0.11 : -0.12) + ((facetNoise - 0.5) * 0.18);
 
-					edgeWobble =
-						(Math.sin((angle * 2.15) + (now * 0.0036)) * (0.85 + (intensityAmount * 0.8))) +
-						(Math.cos((angle * 4.7) - (now * 0.0028)) * (0.55 + (intensityAmount * 0.6))) +
-						(Math.sin((angle * 7.1) + (shapeNoise * 5.4) + (now * 0.0021)) * (0.32 + (intensityAmount * 0.48))) +
-						((edgeNoise - 0.5) * (1.35 + (intensityAmount * 1.55)));
+					facetedDistance =
+						(Math.max(Math.abs(warpedX), Math.abs(warpedY)) * (0.88 + (facetNoise * 0.18))) +
+						(Math.min(Math.abs(warpedX), Math.abs(warpedY)) * (0.23 + (edgeNoise * 0.08)));
 
-					mainRadius = (radius * (0.72 + (shapeNoise * 0.13) + (intensityAmount * 0.05))) + edgeWobble;
-					lobeRadiusA = radius * (0.42 + (intensityAmount * 0.16) + (edgeNoise * 0.09));
-					lobeRadiusB = radius * (0.34 + (intensityAmount * 0.12) + (shapeNoise * 0.08));
+					mainRadius = radius * (0.72 + facetStep + (shapeNoise * 0.09) + (intensityAmount * 0.035));
+					mainEdge = 1 - (facetedDistance / Math.max(mainRadius, 1));
 
-					mainDistance = Math.sqrt((warpedX * warpedX) + (warpedY * warpedY));
-					lobeDistanceOne = Math.sqrt(Math.pow(warpedX - lobeAX, 2) + Math.pow(warpedY - lobeAY, 2));
-					lobeDistanceTwo = Math.sqrt(Math.pow(warpedX - lobeBX, 2) + Math.pow(warpedY - lobeBY, 2));
+					legA = legEdgeContribution(
+						warpedX,
+						warpedY,
+						mainRadius,
+						legAngleA,
+						radius * (0.48 + (intensityAmount * 0.62)),
+						radius * (0.13 + (intensityAmount * 0.06)),
+						0.88
+					);
+					legB = legEdgeContribution(
+						warpedX,
+						warpedY,
+						mainRadius,
+						legAngleB,
+						radius * (0.34 + (intensityAmount * 0.44)),
+						radius * (0.11 + (intensityAmount * 0.05)),
+						0.7
+					);
+					legC = legEdgeContribution(
+						warpedX,
+						warpedY,
+						mainRadius,
+						legAngleC,
+						radius * (0.26 + (intensityAmount * 0.36)),
+						radius * (0.1 + (intensityAmount * 0.04)),
+						0.56
+					);
 
-					mainEdge = 1 - (mainDistance / Math.max(mainRadius, 1));
-					lobeEdgeA = (1 - (lobeDistanceOne / Math.max(lobeRadiusA, 1))) * (0.72 + (intensityAmount * 0.18));
-					lobeEdgeB = (1 - (lobeDistanceTwo / Math.max(lobeRadiusB, 1))) * (0.58 + (intensityAmount * 0.15));
-					edge = Math.max(mainEdge, lobeEdgeA, lobeEdgeB);
+					legEdge = Math.max(legA, legB, legC);
+					edge = Math.max(mainEdge, legEdge);
+					isLeg = legEdge > mainEdge;
 
 					if (edge <= 0)
 						continue;
 
-					variance =
-						0.94 +
-						((shapeNoise - 0.5) * 0.11) +
-						((edgeNoise - 0.5) * 0.1) +
-						(Math.sin((cellX * 0.92) + (cellY * 1.18) + (now * 0.006)) * 0.04);
+					if (!isLeg && edge < 0.22 && shapeNoise < 0.11)
+						continue;
 
-					if (mainDistance <= coreRadius || lobeDistanceOne <= coreRadius * 0.88) {
-						falloff = (1.08 + (intensityAmount * 1.18)) * variance;
+					variance =
+						0.96 +
+						((shapeNoise - 0.5) * 0.09) +
+						((edgeNoise - 0.5) * 0.08) +
+						(Math.sin((cellX * 1.14) + (cellY * 0.84) + (now * 0.0065)) * 0.035);
+
+					if (facetedDistance <= coreRadius) {
+						falloff = (1.05 + (intensityAmount * 1.12)) * variance;
+					} else if (isLeg) {
+						falloff = Math.pow(edge, 0.82) * (0.28 + (intensityAmount * 0.26)) * variance;
 					} else {
-						falloff = Math.pow(edge, 1.22) * (0.74 + (intensityAmount * 0.5)) * variance;
+						falloff = Math.pow(edge, 1.04) * (0.58 + (intensityAmount * 0.38)) * variance;
 					}
 
 					if (falloff <= 0)
