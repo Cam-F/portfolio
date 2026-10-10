@@ -6,13 +6,10 @@
 			$host = $('#banner header').first();
 
 		// Footer version marker.
-		$('.site-version').text('V53');
+		$('.site-version').text('V54');
 
-		if ($('#void-anomaly').length > 0)
+		if ($('#void-anomaly').length > 0 || $host.length === 0)
 			return;
-
-		if ($host.length === 0)
-			$host = $body;
 
 		$host.addClass('void-anomaly-host');
 
@@ -20,12 +17,13 @@
 			'<style id="void-anomaly-styles">' +
 				'.void-anomaly-host {' +
 					'position: relative;' +
+					'overflow: visible;' +
 				'}' +
 				'.void-anomaly {' +
 					'position: absolute;' +
-					'z-index: 8;' +
-					'width: 16px;' +
-					'height: 16px;' +
+					'z-index: 6;' +
+					'width: 22px;' +
+					'height: 22px;' +
 					'padding: 0;' +
 					'border: 0;' +
 					'border-radius: 50%;' +
@@ -35,118 +33,97 @@
 					'overflow: visible;' +
 					'appearance: none;' +
 					'-webkit-appearance: none;' +
-					'transform: translate(-50%, -50%) scale(1);' +
-					'transition: top 240ms cubic-bezier(0.18, 0.89, 0.32, 1.28), left 240ms cubic-bezier(0.18, 0.89, 0.32, 1.28), opacity 180ms ease, filter 180ms ease;' +
+					'transform: translate(-50%, -50%);' +
+					'transition: top 260ms ease, left 260ms ease, opacity 220ms ease, filter 220ms ease;' +
+					'filter: drop-shadow(0 0 9px var(--orb-glow, rgba(33, 248, 247, 0.45)));' +
 				'}' +
 				'.void-anomaly:hover,' +
 				'.void-anomaly:focus {' +
 					'opacity: 1;' +
 					'outline: 0;' +
+					'filter: drop-shadow(0 0 14px var(--orb-glow, rgba(33, 248, 247, 0.65)));' +
 				'}' +
-				'.void-orb-core,' +
-				'.void-orb-shine,' +
-				'.void-orb-ring,' +
-				'.void-orb-particles {' +
+				'.void-anomaly-core,' +
+				'.void-anomaly-particles {' +
 					'position: absolute;' +
+					'inset: 0;' +
+					'border-radius: 50%;' +
 					'pointer-events: none;' +
 				'}' +
-				'.void-orb-core {' +
-					'inset: 0;' +
-					'border-radius: 50%;' +
+				'.void-anomaly-core {' +
+					'background: radial-gradient(circle at 35% 28%, rgba(255, 255, 255, 0.95) 0%, var(--orb-rim, #21f8f7) 16%, var(--orb-core, #21f8f7) 48%, rgba(0, 0, 0, 0.92) 100%);' +
+					'box-shadow: inset -2px -3px 7px rgba(0, 0, 0, 0.82), 0 0 8px var(--orb-glow, rgba(33, 248, 247, 0.5)), 0 0 22px var(--orb-wide, rgba(33, 248, 247, 0.24));' +
 					'animation: voidOrbPulse 3.8s ease-in-out infinite;' +
 				'}' +
-				'.void-orb-shine {' +
-					'left: 3px;' +
-					'top: 3px;' +
-					'width: 4px;' +
-					'height: 4px;' +
+				'.void-anomaly-core:after {' +
+					'content: "";' +
+					'position: absolute;' +
+					'inset: -5px;' +
 					'border-radius: 50%;' +
-					'background: rgba(255, 255, 255, 0.72);' +
-					'filter: blur(0.3px);' +
-					'opacity: 0.72;' +
+					'border: 1px solid var(--orb-rim, #21f8f7);' +
+					'opacity: 0.28;' +
+					'box-shadow: 0 0 12px var(--orb-glow, rgba(33, 248, 247, 0.45));' +
 				'}' +
-				'.void-orb-ring {' +
-					'left: -5px;' +
-					'top: 5px;' +
-					'width: 26px;' +
-					'height: 6px;' +
-					'border-radius: 50%;' +
-					'border: 1px solid rgba(255, 255, 255, 0.28);' +
-					'opacity: 0.5;' +
-					'transform: rotate(-17deg);' +
-					'animation: voidOrbOrbit 4.8s ease-in-out infinite;' +
-				'}' +
-				'.void-orb-particles {' +
-					'inset: 0;' +
-				'}' +
-				'.void-orb-particle {' +
+				'.void-anomaly-particle {' +
 					'position: absolute;' +
 					'left: 50%;' +
 					'top: 50%;' +
-					'width: 2px;' +
-					'height: 2px;' +
+					'width: 3px;' +
+					'height: 3px;' +
 					'border-radius: 50%;' +
+					'background: var(--orb-rim, #21f8f7);' +
+					'box-shadow: 0 0 7px var(--orb-glow, rgba(33, 248, 247, 0.8));' +
 					'opacity: 0;' +
-					'transform: translate(-50%, -50%) rotate(var(--void-angle)) translateX(0);' +
+					'transform: translate(-50%, -50%) rotate(var(--orb-angle)) translateX(0);' +
 				'}' +
 				'.void-anomaly.is-jumping {' +
-					'animation: voidOrbJump 320ms cubic-bezier(0.18, 0.89, 0.32, 1.28);' +
+					'animation: voidOrbJump 360ms ease-out;' +
 				'}' +
 				'.void-anomaly.is-popping {' +
-					'animation: voidOrbPop 760ms cubic-bezier(0.14, 0.9, 0.28, 1) forwards;' +
+					'animation: voidOrbPop 820ms cubic-bezier(0.15, 0.85, 0.22, 1) forwards;' +
 				'}' +
-				'.void-anomaly.is-popping .void-orb-ring {' +
-					'animation: voidOrbRingPop 760ms ease-out forwards;' +
+				'.void-anomaly.is-popping .void-anomaly-core {' +
+					'animation: voidOrbCorePop 820ms ease-out forwards;' +
 				'}' +
-				'.void-anomaly.is-popping .void-orb-core {' +
-					'animation: voidOrbCorePop 760ms ease-out forwards;' +
+				'.void-anomaly.is-popping .void-anomaly-particle {' +
+					'animation: voidOrbParticle 820ms cubic-bezier(0.13, 0.82, 0.33, 1) forwards;' +
+					'animation-delay: var(--orb-delay);' +
 				'}' +
-				'.void-anomaly.is-popping .void-orb-particle {' +
-					'animation: voidOrbParticlePop 760ms cubic-bezier(0.13, 0.82, 0.33, 1) forwards;' +
-					'animation-delay: var(--void-delay);' +
-				'}' +
-				'.void-anomaly.is-dormant {' +
+				'.void-anomaly.is-dormant,' +
+				'.void-anomaly.is-hidden {' +
 					'opacity: 0;' +
 					'pointer-events: none;' +
 				'}' +
 				'.void-anomaly.is-reforming {' +
-					'animation: voidOrbReform 520ms cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;' +
+					'animation: voidOrbReform 620ms ease-out forwards;' +
 				'}' +
 				'@keyframes voidOrbPulse {' +
-					'0%, 100% { transform: scale(0.92); }' +
+					'0%, 100% { transform: scale(0.9); }' +
 					'50% { transform: scale(1.12); }' +
-				'}' +
-				'@keyframes voidOrbOrbit {' +
-					'0%, 100% { transform: rotate(-17deg) scaleX(1); opacity: 0.42; }' +
-					'50% { transform: rotate(163deg) scaleX(1.08); opacity: 0.68; }' +
 				'}' +
 				'@keyframes voidOrbJump {' +
 					'0% { transform: translate(-50%, -50%) scale(1); }' +
-					'42% { transform: translate(-50%, -50%) scale(1.55); }' +
+					'45% { transform: translate(-50%, -50%) scale(1.38); }' +
 					'100% { transform: translate(-50%, -50%) scale(1); }' +
 				'}' +
 				'@keyframes voidOrbPop {' +
 					'0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }' +
-					'25% { transform: translate(-50%, -50%) scale(2.15); opacity: 1; }' +
-					'100% { transform: translate(-50%, -50%) scale(0.3); opacity: 0; }' +
-				'}' +
-				'@keyframes voidOrbRingPop {' +
-					'0% { transform: rotate(-17deg) scaleX(1); opacity: 0.72; }' +
-					'100% { transform: rotate(220deg) scaleX(2.2) scaleY(1.8); opacity: 0; }' +
+					'25% { transform: translate(-50%, -50%) scale(1.85); opacity: 1; }' +
+					'100% { transform: translate(-50%, -50%) scale(0.45); opacity: 0; }' +
 				'}' +
 				'@keyframes voidOrbCorePop {' +
 					'0% { transform: scale(1); opacity: 1; }' +
-					'45% { transform: scale(0.72); opacity: 0.95; }' +
+					'35% { transform: scale(0.55); opacity: 1; }' +
 					'100% { transform: scale(0.05); opacity: 0; }' +
 				'}' +
-				'@keyframes voidOrbParticlePop {' +
-					'0% { opacity: 0; transform: translate(-50%, -50%) rotate(var(--void-angle)) translateX(0); }' +
-					'16% { opacity: 1; }' +
-					'100% { opacity: 0; transform: translate(-50%, -50%) rotate(var(--void-angle)) translateX(var(--void-distance)); }' +
+				'@keyframes voidOrbParticle {' +
+					'0% { opacity: 0; transform: translate(-50%, -50%) rotate(var(--orb-angle)) translateX(0); }' +
+					'18% { opacity: 1; }' +
+					'100% { opacity: 0; transform: translate(-50%, -50%) rotate(var(--orb-angle)) translateX(var(--orb-distance)); }' +
 				'}' +
 				'@keyframes voidOrbReform {' +
-					'0% { transform: translate(-50%, -50%) scale(0.12); opacity: 0; }' +
-					'70% { transform: translate(-50%, -50%) scale(1.35); opacity: 1; }' +
+					'0% { transform: translate(-50%, -50%) scale(0.15); opacity: 0; }' +
+					'55% { transform: translate(-50%, -50%) scale(1.3); opacity: 0.9; }' +
 					'100% { transform: translate(-50%, -50%) scale(1); opacity: 0.92; }' +
 				'}' +
 				'@media screen and (max-width: 736px) {' +
@@ -154,160 +131,299 @@
 				'}' +
 				'@media (prefers-reduced-motion: reduce) {' +
 					'.void-anomaly,' +
-					'.void-orb-core,' +
-					'.void-orb-ring,' +
-					'.void-orb-particle {' +
+					'.void-anomaly-core,' +
+					'.void-anomaly-particle {' +
 						'animation: none !important;' +
 						'transition: none !important;' +
 					'}' +
+					'.void-anomaly.is-jumping { opacity: 1; }' +
 					'.void-anomaly.is-popping { opacity: 0; }' +
 				'}' +
 			'</style>'
 		);
 
-		var voidPositions = [
-			{ name: 'name-upper-left', top: '2.85rem', left: '29%' },
-			{ name: 'name-upper-right', top: '2.85rem', left: '71%' },
-			{ name: 'title-lower-left', top: '8.35rem', left: '39%' },
-			{ name: 'title-lower-right', top: '8.35rem', left: '61%' }
+		var particleMarkup = '',
+			availablePositions = [],
+			activePositionName = null,
+			activeColorIndex = -1,
+			clickCount = 0,
+			clickResetTimer = null,
+			stageTimer = null,
+			resizeTimer = null;
+
+		var palettes = [
+			{ name: 'dust', core: '#f5ed2c', rim: '#fff46a', glow: 'rgba(245, 237, 44, 0.7)', wide: 'rgba(245, 237, 44, 0.28)' },
+			{ name: 'redacted', core: '#080808', rim: '#a6a6a6', glow: 'rgba(0, 0, 0, 0.82)', wide: 'rgba(170, 170, 170, 0.22)' },
+			{ name: 'wayfinder', core: '#7d08e2', rim: '#b35cff', glow: 'rgba(125, 8, 226, 0.72)', wide: 'rgba(125, 8, 226, 0.3)' },
+			{ name: 'ruined-king', core: '#449e7d', rim: '#7ee1ba', glow: 'rgba(68, 158, 125, 0.72)', wide: 'rgba(68, 158, 125, 0.3)' },
+			{ name: 'jar-wars', core: '#c65955', rim: '#68dad4', glow: 'rgba(104, 218, 212, 0.72)', wide: 'rgba(198, 89, 85, 0.3)' },
+			{ name: 'vicious-circle', core: '#21f8f7', rim: '#8dffff', glow: 'rgba(33, 248, 247, 0.76)', wide: 'rgba(33, 248, 247, 0.3)' }
 		];
 
-		var orbThemes = [
-			{ name: 'dust', color: '#F5ED2C', accent: '#fff9a8', glow: 'rgba(245, 237, 44, 0.58)' },
-			{ name: 'redacted', color: '#080808', accent: '#555555', glow: 'rgba(255, 255, 255, 0.34)' },
-			{ name: 'wayfinder', color: '#7D08E2', accent: '#ca7cff', glow: 'rgba(125, 8, 226, 0.62)' },
-			{ name: 'ruined-king', color: '#449E7D', accent: '#9ff0cb', glow: 'rgba(68, 158, 125, 0.58)' },
-			{ name: 'jar-wars-warm', color: '#C65955', accent: '#ffb0a8', glow: 'rgba(198, 89, 85, 0.58)' },
-			{ name: 'jar-wars-cool', color: '#68DAD4', accent: '#c9fffb', glow: 'rgba(104, 218, 212, 0.58)' },
-			{ name: 'vicious-circle', color: '#21F8F7', accent: '#b4ffff', glow: 'rgba(33, 248, 247, 0.62)' }
-		];
-
-		var particleMarkup = '';
-
-		for (var i = 0; i < 16; i++) {
-			particleMarkup += '<span class="void-orb-particle" style="--void-angle:' + (i * 22.5) + 'deg; --void-distance:' + (18 + (i % 5) * 5) + 'px; --void-delay:' + (i % 4) * 18 + 'ms;"></span>';
+		for (var i = 0; i < 18; i++) {
+			particleMarkup += '<span class="void-anomaly-particle" style="--orb-angle:' + (i * 20) + 'deg; --orb-distance:' + (24 + (i % 6) * 5) + 'px; --orb-delay:' + (i % 5) * 18 + 'ms;"></span>';
 		}
 
 		var $void = $(
-			'<button type="button" id="void-anomaly" class="void-anomaly" aria-label="Hidden glowing orb anomaly">' +
-				'<span class="void-orb-core" aria-hidden="true"></span>' +
-				'<span class="void-orb-shine" aria-hidden="true"></span>' +
-				'<span class="void-orb-ring" aria-hidden="true"></span>' +
-				'<span class="void-orb-particles" aria-hidden="true">' + particleMarkup + '</span>' +
+			'<button type="button" id="void-anomaly" class="void-anomaly" aria-label="Hidden color orb anomaly">' +
+				'<span class="void-anomaly-core" aria-hidden="true"></span>' +
+				'<span class="void-anomaly-particles" aria-hidden="true">' + particleMarkup + '</span>' +
 			'</button>'
 		);
 
-		var activePositionIndex = -1,
-			activeThemeIndex = -1,
-			clickCount = 0,
-			jumpTimer = null;
+		var intersects = function(a, b) {
+			return !(a.right < b.left || a.left > b.right || a.bottom < b.top || a.top > b.bottom);
+		};
 
-		var chooseIndex = function(list, currentIndex) {
-			var nextIndex;
+		var elementRect = function($element, hostRect, padding) {
+			var rect;
 
-			if (list.length <= 1)
+			if ($element.length === 0 || !$element[0])
+				return null;
+
+			rect = $element[0].getBoundingClientRect();
+
+			return {
+				left: rect.left - hostRect.left - padding,
+				top: rect.top - hostRect.top - padding,
+				right: rect.right - hostRect.left + padding,
+				bottom: rect.bottom - hostRect.top + padding
+			};
+		};
+
+		var centerY = function(rect) {
+			return rect.top + ((rect.bottom - rect.top) * 0.5);
+		};
+
+		var buildSafePositions = function() {
+			var hostRect = $host[0].getBoundingClientRect(),
+				padding = 22,
+				orbSize = 58,
+				halfOrb = orbSize * 0.5,
+				minX = halfOrb,
+				maxX = hostRect.width - halfOrb,
+				minY = halfOrb,
+				maxY = hostRect.height - halfOrb,
+				nameRect = elementRect($host.find('h1').first(), hostRect, padding),
+				titleRect = elementRect($host.find('p').first(), hostRect, padding),
+				linksRect = elementRect($host.find('ul').first(), hostRect, padding),
+				blocked = [],
+				candidates = [];
+
+			if (nameRect)
+				blocked.push(nameRect);
+
+			if (titleRect)
+				blocked.push(titleRect);
+
+			if (linksRect)
+				blocked.push(linksRect);
+
+			var addCandidate = function(name, x, y) {
+				var box = {
+					left: x - halfOrb,
+					top: y - halfOrb,
+					right: x + halfOrb,
+					bottom: y + halfOrb
+				};
+
+				if (x < minX || x > maxX || y < minY || y > maxY)
+					return;
+
+				for (var j = 0; j < blocked.length; j++) {
+					if (intersects(box, blocked[j]))
+						return;
+				}
+
+				candidates.push({ name: name, x: Math.round(x), y: Math.round(y) });
+			};
+
+			var addSideCandidates = function(label, rect, offset) {
+				if (!rect)
+					return;
+
+				addCandidate(label + '-left', rect.left - offset, centerY(rect));
+				addCandidate(label + '-right', rect.right + offset, centerY(rect));
+			};
+
+			addSideCandidates('name', nameRect, 36);
+			addSideCandidates('title', titleRect, 36);
+			addSideCandidates('links', linksRect, 42);
+
+			if (nameRect && titleRect) {
+				addCandidate('between-name-title-left', Math.min(nameRect.left, titleRect.left) - 38, (nameRect.bottom + titleRect.top) * 0.5);
+				addCandidate('between-name-title-right', Math.max(nameRect.right, titleRect.right) + 38, (nameRect.bottom + titleRect.top) * 0.5);
+			}
+
+			if (titleRect && linksRect) {
+				addCandidate('between-title-links-left', Math.min(titleRect.left, linksRect.left) - 42, (titleRect.bottom + linksRect.top) * 0.5);
+				addCandidate('between-title-links-right', Math.max(titleRect.right, linksRect.right) + 42, (titleRect.bottom + linksRect.top) * 0.5);
+			}
+
+			return candidates;
+		};
+
+		var choosePosition = function() {
+			var choices, index;
+
+			if (availablePositions.length === 0)
+				return null;
+
+			choices = availablePositions.filter(function(position) {
+				return position.name !== activePositionName;
+			});
+
+			if (choices.length === 0)
+				choices = availablePositions;
+
+			index = Math.floor(Math.random() * choices.length);
+
+			return choices[index];
+		};
+
+		var applyPosition = function(position) {
+			if (!position)
+				return;
+
+			activePositionName = position.name;
+
+			$void
+				.removeClass('is-hidden')
+				.attr('data-orb-position', position.name)
+				.css({
+					top: position.y + 'px',
+					left: position.x + 'px',
+					right: 'auto'
+				});
+		};
+
+		var refreshPositions = function(keepCurrent) {
+			var currentPosition = null,
+				position;
+
+			availablePositions = buildSafePositions();
+
+			if (availablePositions.length === 0) {
+				$void.addClass('is-hidden');
+				activePositionName = null;
+				return;
+			}
+
+			if (keepCurrent && activePositionName) {
+				for (var i = 0; i < availablePositions.length; i++) {
+					if (availablePositions[i].name === activePositionName) {
+						currentPosition = availablePositions[i];
+						break;
+					}
+				}
+			}
+
+			position = currentPosition || choosePosition();
+			applyPosition(position);
+		};
+
+		var choosePaletteIndex = function() {
+			var index;
+
+			if (palettes.length <= 1)
 				return 0;
 
 			do {
-				nextIndex = Math.floor(Math.random() * list.length);
-			} while (nextIndex === currentIndex);
+				index = Math.floor(Math.random() * palettes.length);
+			} while (index === activeColorIndex);
 
-			return nextIndex;
+			return index;
 		};
 
-		var applyTheme = function() {
-			var theme = orbThemes[activeThemeIndex],
-				coreBackground = 'radial-gradient(circle at 32% 28%, rgba(255,255,255,0.95) 0%, ' + theme.accent + ' 16%, ' + theme.color + ' 48%, rgba(0,0,0,0.86) 100%)',
-				coreShadow = 'inset 0 0 5px rgba(0,0,0,0.88), 0 0 7px ' + theme.color + ', 0 0 18px ' + theme.glow + ', 0 0 34px ' + theme.glow;
+		var applyPalette = function() {
+			var palette;
 
-			$void
-				.attr('data-orb-theme', theme.name)
-				.css({
-					'filter': 'drop-shadow(0 0 10px ' + theme.glow + ')'
-				});
+			activeColorIndex = choosePaletteIndex();
+			palette = palettes[activeColorIndex];
 
-			$void.find('.void-orb-core').css({
-				'background': coreBackground,
-				'box-shadow': coreShadow
-			});
+			if ($void[0]) {
+				$void[0].style.setProperty('--orb-core', palette.core);
+				$void[0].style.setProperty('--orb-rim', palette.rim);
+				$void[0].style.setProperty('--orb-glow', palette.glow);
+				$void[0].style.setProperty('--orb-wide', palette.wide);
+			}
 
-			$void.find('.void-orb-ring').css({
-				'border-color': theme.glow,
-				'box-shadow': '0 0 8px ' + theme.glow + ', inset 0 0 6px rgba(0, 0, 0, 0.72)'
-			});
-
-			$void.find('.void-orb-particle').css({
-				'background': theme.accent,
-				'box-shadow': '0 0 6px ' + theme.glow
-			});
+			$void.attr('data-orb-palette', palette.name);
 		};
 
-		var moveOrb = function() {
-			var position;
+		var resetClickProgress = function() {
+			clickCount = 0;
+		};
 
-			activePositionIndex = chooseIndex(voidPositions, activePositionIndex);
-			activeThemeIndex = chooseIndex(orbThemes, activeThemeIndex);
-
-			position = voidPositions[activePositionIndex];
-
-			$void
-				.attr('data-void-position', position.name)
-				.css({
-					'top': position.top,
-					'left': position.left,
-					'right': 'auto'
-				});
-
-			applyTheme();
+		var queueClickReset = function() {
+			window.clearTimeout(clickResetTimer);
+			clickResetTimer = window.setTimeout(resetClickProgress, 4200);
 		};
 
 		var playJump = function() {
-			window.clearTimeout(jumpTimer);
+			window.clearTimeout(stageTimer);
 			$void.removeClass('is-jumping');
 
 			if ($void[0])
 				$void[0].offsetWidth;
 
-			moveOrb();
+			refreshPositions(false);
+			applyPalette();
 			$void.addClass('is-jumping');
 
-			jumpTimer = window.setTimeout(function() {
+			stageTimer = window.setTimeout(function() {
 				$void.removeClass('is-jumping');
-			}, 340);
+			}, 380);
+		};
+
+		var playPop = function() {
+			window.clearTimeout(clickResetTimer);
+			window.clearTimeout(stageTimer);
+			resetClickProgress();
+
+			$void.removeClass('is-jumping is-reforming').addClass('is-popping');
+
+			window.setTimeout(function() {
+				$void.removeClass('is-popping').addClass('is-dormant');
+			}, 850);
+
+			window.setTimeout(function() {
+				refreshPositions(false);
+				applyPalette();
+				$void.removeClass('is-dormant').addClass('is-reforming');
+			}, 1600);
+
+			window.setTimeout(function() {
+				$void.removeClass('is-reforming');
+			}, 2250);
 		};
 
 		$host.append($void);
-		moveOrb();
+		refreshPositions(false);
+		applyPalette();
 
 		$void.on('click', function() {
 
-			if ($void.hasClass('is-popping') || $void.hasClass('is-dormant') || $void.hasClass('is-reforming'))
+			if ($void.hasClass('is-popping') || $void.hasClass('is-dormant') || $void.hasClass('is-reforming') || $void.hasClass('is-hidden'))
 				return;
 
 			clickCount += 1;
 
 			if (clickCount < 3) {
 				playJump();
+				queueClickReset();
 				return;
 			}
 
-			window.clearTimeout(jumpTimer);
-			$void.removeClass('is-jumping').addClass('is-popping');
+			playPop();
 
-			window.setTimeout(function() {
-				$void.removeClass('is-popping').addClass('is-dormant');
-			}, 780);
+		});
 
-			window.setTimeout(function() {
-				clickCount = 0;
-				moveOrb();
-				$void.removeClass('is-dormant').addClass('is-reforming');
-			}, 1650);
-
-			window.setTimeout(function() {
-				$void.removeClass('is-reforming');
-			}, 2220);
-
+		$(window).on('resize orientationchange', function() {
+			window.clearTimeout(resizeTimer);
+			resizeTimer = window.setTimeout(function() {
+				refreshPositions(true);
+			}, 140);
 		});
 
 	});
