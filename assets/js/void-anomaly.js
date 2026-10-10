@@ -14,8 +14,9 @@
 			'<style id="void-anomaly-styles">' +
 				'.void-anomaly {' +
 					'position: absolute;' +
-					'top: 9.5rem;' +
-					'right: 17.5%;' +
+					'top: var(--void-top, 9.5rem);' +
+					'left: var(--void-left, auto);' +
+					'right: var(--void-right, auto);' +
 					'z-index: 3;' +
 					'width: 18px;' +
 					'height: 18px;' +
@@ -185,6 +186,13 @@
 			'</style>'
 		);
 
+		var voidPositions = [
+			{ name: 'upper-left', top: '8.95rem', left: '11.5%', right: 'auto' },
+			{ name: 'upper-right', top: '8.75rem', left: 'auto', right: '8.7%' },
+			{ name: 'lower-left', top: '17.6rem', left: '28.2%', right: 'auto' },
+			{ name: 'lower-right', top: '17.35rem', left: 'auto', right: '22.3%' }
+		];
+
 		var particleMarkup = '';
 
 		for (var i = 0; i < 16; i++) {
@@ -199,9 +207,38 @@
 			'</button>'
 		);
 
-		var clickCount = 0,
+		var activePositionIndex = -1,
+			clickCount = 0,
 			clickResetTimer = null,
 			stageTimer = null;
+
+		var choosePositionIndex = function() {
+			var nextIndex;
+
+			if (voidPositions.length <= 1)
+				return 0;
+
+			do {
+				nextIndex = Math.floor(Math.random() * voidPositions.length);
+			} while (nextIndex === activePositionIndex);
+
+			return nextIndex;
+		};
+
+		var applyRandomPosition = function() {
+			var position;
+
+			activePositionIndex = choosePositionIndex();
+			position = voidPositions[activePositionIndex];
+
+			$void
+				.attr('data-void-position', position.name)
+				.css({
+					'--void-top': position.top,
+					'--void-left': position.left,
+					'--void-right': position.right
+				});
+		};
 
 		var resetClickProgress = function() {
 			clickCount = 0;
@@ -218,7 +255,7 @@
 			$void.removeClass('is-click-one is-click-two');
 
 			if ($void[0])
-				void $void[0].offsetWidth;
+				$void[0].offsetWidth;
 
 			$void.addClass(stageClass);
 
@@ -227,26 +264,8 @@
 			}, duration);
 		};
 
-		var shatterVoid = function() {
-			window.clearTimeout(clickResetTimer);
-			window.clearTimeout(stageTimer);
-			clickCount = 0;
-			$void.removeClass('is-click-one is-click-two').addClass('is-shattering');
-
-			window.setTimeout(function() {
-				$void.removeClass('is-shattering').addClass('is-dormant');
-			}, 920);
-
-			window.setTimeout(function() {
-				$void.removeClass('is-dormant').addClass('is-reforming');
-			}, 7600);
-
-			window.setTimeout(function() {
-				$void.removeClass('is-reforming');
-			}, 8350);
-		};
-
 		$body.append($void);
+		applyRandomPosition();
 
 		$void.on('click', function() {
 
@@ -256,18 +275,34 @@
 			clickCount += 1;
 
 			if (clickCount === 1) {
-				playClickStage('is-click-one', 440);
+				playClickStage('is-click-one', 420);
 				queueClickReset();
 				return;
 			}
 
 			if (clickCount === 2) {
-				playClickStage('is-click-two', 660);
+				playClickStage('is-click-two', 620);
 				queueClickReset();
 				return;
 			}
 
-			shatterVoid();
+			window.clearTimeout(clickResetTimer);
+			window.clearTimeout(stageTimer);
+			resetClickProgress();
+			$void.addClass('is-shattering');
+
+			window.setTimeout(function() {
+				$void.removeClass('is-shattering').addClass('is-dormant');
+			}, 920);
+
+			window.setTimeout(function() {
+				applyRandomPosition();
+				$void.removeClass('is-dormant').addClass('is-reforming');
+			}, 7600);
+
+			window.setTimeout(function() {
+				$void.removeClass('is-reforming');
+			}, 8350);
 
 		});
 
