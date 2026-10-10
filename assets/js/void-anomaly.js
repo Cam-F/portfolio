@@ -5,7 +5,7 @@
 		var $body = $('body');
 
 		// Footer version marker.
-		$('.site-version').text('V50');
+		$('.site-version').text('V51');
 
 		if ($('#void-anomaly').length > 0)
 			return;
@@ -14,22 +14,22 @@
 			'<style id="void-anomaly-styles">' +
 				'.void-anomaly {' +
 					'position: absolute;' +
-					'top: var(--void-top, 9.5rem);' +
-					'left: var(--void-left, auto);' +
-					'right: var(--void-right, auto);' +
-					'z-index: 3;' +
-					'width: 18px;' +
-					'height: 18px;' +
+					'top: 9.5rem;' +
+					'left: auto;' +
+					'right: 17.5%;' +
+					'z-index: 6;' +
+					'width: 20px;' +
+					'height: 20px;' +
 					'padding: 0;' +
 					'border: 0;' +
 					'border-radius: 50%;' +
 					'background: transparent;' +
 					'cursor: pointer;' +
-					'opacity: 0.82;' +
+					'opacity: 0.95;' +
 					'overflow: visible;' +
 					'appearance: none;' +
 					'-webkit-appearance: none;' +
-					'filter: drop-shadow(0 0 7px rgba(33, 248, 247, 0.24));' +
+					'filter: drop-shadow(0 0 8px rgba(33, 248, 247, 0.35));' +
 					'transition: opacity 220ms ease, transform 220ms ease, filter 220ms ease;' +
 				'}' +
 				'.void-anomaly:hover,' +
@@ -37,7 +37,7 @@
 					'opacity: 1;' +
 					'transform: scale(1.18);' +
 					'outline: 0;' +
-					'filter: drop-shadow(0 0 10px rgba(33, 248, 247, 0.42));' +
+					'filter: drop-shadow(0 0 12px rgba(33, 248, 247, 0.55));' +
 				'}' +
 				'.void-anomaly-core,' +
 				'.void-anomaly-ring {' +
@@ -49,20 +49,20 @@
 					'inset: 4px;' +
 					'z-index: 2;' +
 					'background: radial-gradient(circle at 42% 38%, #05050b 0%, #010102 58%, rgba(0, 0, 0, 0.02) 72%);' +
-					'box-shadow: inset 0 0 5px #000, 0 0 5px rgba(125, 8, 226, 0.72), 0 0 9px rgba(33, 248, 247, 0.34);' +
+					'box-shadow: inset 0 0 5px #000, 0 0 6px rgba(125, 8, 226, 0.82), 0 0 11px rgba(33, 248, 247, 0.42);' +
 					'animation: voidAnomalyPulse 4.8s ease-in-out infinite;' +
 				'}' +
 				'.void-anomaly-ring {' +
 					'left: -7px;' +
-					'top: 5px;' +
+					'top: 6px;' +
 					'z-index: 3;' +
-					'width: 32px;' +
+					'width: 34px;' +
 					'height: 8px;' +
-					'border: 1px solid rgba(33, 248, 247, 0.48);' +
-					'border-left-color: rgba(125, 8, 226, 0.9);' +
-					'border-bottom-color: rgba(245, 237, 44, 0.44);' +
+					'border: 1px solid rgba(33, 248, 247, 0.62);' +
+					'border-left-color: rgba(125, 8, 226, 0.95);' +
+					'border-bottom-color: rgba(245, 237, 44, 0.52);' +
 					'background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.68) 0%, rgba(0, 0, 0, 0.24) 48%, rgba(0, 0, 0, 0) 68%);' +
-					'box-shadow: 0 0 8px rgba(125, 8, 226, 0.34), inset 0 0 6px rgba(0, 0, 0, 0.92);' +
+					'box-shadow: 0 0 9px rgba(125, 8, 226, 0.42), inset 0 0 6px rgba(0, 0, 0, 0.92);' +
 					'animation: voidAnomalyOrbit 5.8s ease-in-out infinite;' +
 				'}' +
 				'.void-anomaly-particles {' +
@@ -164,9 +164,9 @@
 				'@keyframes voidAnomalyReform {' +
 					'0% { transform: scale(0.1); opacity: 0; }' +
 					'60% { transform: scale(1.35); opacity: 0.92; }' +
-					'100% { transform: scale(1); opacity: 0.82; }' +
+					'100% { transform: scale(1); opacity: 0.95; }' +
 				'}' +
-				'@media screen and (max-width: 980px) {' +
+				'@media screen and (max-width: 736px) {' +
 					'.void-anomaly { display: none; }' +
 				'}' +
 				'@media (prefers-reduced-motion: reduce) {' +
@@ -187,10 +187,10 @@
 		);
 
 		var voidPositions = [
-			{ name: 'upper-left', top: '8.95rem', left: '11.5%', right: 'auto' },
-			{ name: 'upper-right', top: '8.75rem', left: 'auto', right: '8.7%' },
-			{ name: 'lower-left', top: '17.6rem', left: '28.2%', right: 'auto' },
-			{ name: 'lower-right', top: '17.35rem', left: 'auto', right: '22.3%' }
+			{ name: 'upper-left', top: '8.95rem', left: '7%', right: 'auto' },
+			{ name: 'upper-right', top: '8.75rem', left: 'auto', right: '7%' },
+			{ name: 'lower-left', top: '17.6rem', left: '28%', right: 'auto' },
+			{ name: 'lower-right', top: '17.35rem', left: 'auto', right: '28%' }
 		];
 
 		var particleMarkup = '';
@@ -234,9 +234,9 @@
 			$void
 				.attr('data-void-position', position.name)
 				.css({
-					'--void-top': position.top,
-					'--void-left': position.left,
-					'--void-right': position.right
+					top: position.top,
+					left: position.left,
+					right: position.right
 				});
 		};
 
