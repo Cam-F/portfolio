@@ -7,7 +7,7 @@
 			finePointerQuery = window.matchMedia('(hover: hover) and (pointer: fine)');
 
 		// Footer version marker.
-		$('.site-version').text('V58');
+		$('.site-version').text('V59');
 
 		if ($('#thermal-cursor-trail').length > 0 || reducedMotionQuery.matches || !finePointerQuery.matches)
 			return;
@@ -21,11 +21,11 @@
 					'width: 100vw;' +
 					'height: 100vh;' +
 					'pointer-events: none;' +
-					'opacity: 0.88;' +
+					'opacity: 0.9;' +
 					'mix-blend-mode: screen;' +
 					'image-rendering: pixelated;' +
 					'image-rendering: crisp-edges;' +
-					'filter: saturate(1.58) contrast(1.08);' +
+					'filter: saturate(1.68) contrast(1.12);' +
 				'}' +
 				'#main,' +
 				'#footer {' +
@@ -49,11 +49,11 @@
 			lastStampTime = 0,
 			lastFrameTime = 0,
 			isVisible = true,
-			cellSize = 14,
-			stampInterval = 46,
-			followEase = 0.085,
-			decayPerSecond = 0.52,
-			maxHeat = 2.45,
+			cellSize = 5,
+			stampInterval = 58,
+			followEase = 0.078,
+			decayPerSecond = 0.5,
+			maxHeat = 3.05,
 			deviceScale = 1;
 
 		canvas.id = 'thermal-cursor-trail';
@@ -66,6 +66,11 @@
 
 		var cellKey = function(x, y) {
 			return x + ':' + y;
+		};
+
+		var cellNoise = function(x, y, salt) {
+			var n = Math.sin((x * 12.9898) + (y * 78.233) + ((salt || 0) * 37.719)) * 43758.5453;
+			return n - Math.floor(n);
 		};
 
 		var resizeCanvas = function() {
@@ -86,7 +91,7 @@
 					x: cellX,
 					y: cellY,
 					heat: 0,
-					seed: Math.random()
+					seed: cellNoise(cellX, cellY, 9)
 				};
 
 				cells[key] = cell;
@@ -98,26 +103,40 @@
 		var stampHeat = function(x, y, strength) {
 			var baseX = Math.floor(x / cellSize),
 				baseY = Math.floor(y / cellSize),
-				radius = 4,
+				radius = 10,
+				coreRadius = 1.15,
+				stampSalt = Math.floor(performance.now() / 180),
 				cellX,
 				cellY,
 				dx,
 				dy,
 				distance,
+				shapeNoise,
+				localRadius,
 				falloff,
-				jitter;
+				speckle;
 
 			for (cellY = baseY - radius; cellY <= baseY + radius; cellY++) {
 				for (cellX = baseX - radius; cellX <= baseX + radius; cellX++) {
 					dx = cellX - baseX;
 					dy = cellY - baseY;
-					distance = Math.sqrt((dx * dx) + (dy * dy));
+					shapeNoise = cellNoise(cellX, cellY, stampSalt);
+					localRadius = radius * (0.62 + (shapeNoise * 0.52));
+					distance = Math.sqrt((dx * dx * (0.88 + (shapeNoise * 0.18))) + (dy * dy * (1.04 - (shapeNoise * 0.16))));
 
-					if (distance > radius)
+					if (distance > localRadius)
 						continue;
 
-					jitter = 0.88 + (Math.random() * 0.22);
-					falloff = Math.pow(1 - (distance / radius), 1.55) * jitter;
+					if (distance > coreRadius && shapeNoise < (0.13 + (distance / radius) * 0.14))
+						continue;
+
+					if (distance <= coreRadius && Math.abs(dx) + Math.abs(dy) <= 1) {
+						falloff = 1.75 + (shapeNoise * 0.28);
+					} else {
+						speckle = 0.48 + (cellNoise(cellX, cellY, stampSalt + 4) * 0.78);
+						falloff = Math.pow(1 - (distance / localRadius), 2.25) * speckle;
+					}
+
 					addHeatToCell(cellX, cellY, strength * falloff);
 				}
 			}
@@ -126,20 +145,17 @@
 		var heatColor = function(heat) {
 			heat = clamp(heat, 0, 1);
 
-			if (heat > 0.82)
-				return 'rgba(255, 18, 36, ' + (0.34 + heat * 0.52) + ')';
+			if (heat > 0.78)
+				return 'rgba(255, 18, 24, ' + (0.36 + heat * 0.54) + ')';
 
-			if (heat > 0.68)
-				return 'rgba(255, 84, 0, ' + (0.28 + heat * 0.5) + ')';
+			if (heat > 0.56)
+				return 'rgba(255, 211, 0, ' + (0.26 + heat * 0.5) + ')';
 
-			if (heat > 0.52)
-				return 'rgba(255, 221, 0, ' + (0.24 + heat * 0.48) + ')';
-
-			if (heat > 0.34)
-				return 'rgba(82, 255, 40, ' + (0.2 + heat * 0.42) + ')';
+			if (heat > 0.35)
+				return 'rgba(72, 255, 42, ' + (0.2 + heat * 0.44) + ')';
 
 			if (heat > 0.18)
-				return 'rgba(0, 169, 255, ' + (0.16 + heat * 0.36) + ')';
+				return 'rgba(0, 170, 255, ' + (0.16 + heat * 0.38) + ')';
 
 			return 'rgba(0, 62, 255, ' + (0.1 + heat * 0.28) + ')';
 		};
@@ -150,8 +166,7 @@
 				cell,
 				normalizedHeat,
 				size,
-				gap,
-				jitterOffset;
+				gap;
 
 			context.clearRect(0, 0, canvas.width, canvas.height);
 			context.globalCompositeOperation = 'lighter';
@@ -167,13 +182,12 @@
 					continue;
 
 				normalizedHeat = clamp(cell.heat / maxHeat, 0, 1);
-				gap = normalizedHeat > 0.7 ? 1 : 2;
+				gap = normalizedHeat > 0.76 ? 0 : 1;
 				size = Math.max(1, Math.ceil((cellSize - gap) * deviceScale));
-				jitterOffset = (cell.seed > 0.66 && normalizedHeat > 0.18) ? deviceScale : 0;
 
 				context.fillStyle = heatColor(normalizedHeat);
 				context.fillRect(
-					Math.round(cell.x * cellSize * deviceScale) + jitterOffset,
+					Math.round(cell.x * cellSize * deviceScale),
 					Math.round(cell.y * cellSize * deviceScale),
 					size,
 					size
@@ -196,7 +210,7 @@
 
 			if (!trailPoint) {
 				trailPoint = { x: targetPoint.x, y: targetPoint.y };
-				stampHeat(trailPoint.x, trailPoint.y, 1.1);
+				stampHeat(trailPoint.x, trailPoint.y, 1.15);
 				lastStampTime = now;
 				return;
 			}
@@ -208,8 +222,8 @@
 			trailPoint.x += dx * followEase;
 			trailPoint.y += dy * followEase;
 
-			if (now - lastStampTime >= stampInterval || distance > cellSize * 2.25) {
-				strength = clamp(0.78 + (distance / 210), 0.78, 1.42);
+			if (now - lastStampTime >= stampInterval || distance > cellSize * 5.5) {
+				strength = clamp(0.86 + (distance / 225), 0.86, 1.52);
 				stampHeat(trailPoint.x, trailPoint.y, strength);
 				lastStampTime = now;
 			}
