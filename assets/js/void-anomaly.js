@@ -7,7 +7,7 @@
 			finePointerQuery = window.matchMedia('(hover: hover) and (pointer: fine)');
 
 		// Footer version marker.
-		$('.site-version').text('V56');
+		$('.site-version').text('V57');
 
 		if ($('#thermal-cursor-trail').length > 0 || reducedMotionQuery.matches || !finePointerQuery.matches)
 			return;
@@ -21,9 +21,11 @@
 					'width: 100vw;' +
 					'height: 100vh;' +
 					'pointer-events: none;' +
-					'opacity: 0.72;' +
+					'opacity: 0.78;' +
 					'mix-blend-mode: screen;' +
-					'filter: saturate(1.2) blur(0.35px);' +
+					'image-rendering: pixelated;' +
+					'image-rendering: crisp-edges;' +
+					'filter: saturate(1.24);' +
 				'}' +
 				'#main,' +
 				'#footer {' +
@@ -41,13 +43,17 @@
 
 		var canvas = document.createElement('canvas'),
 			context = canvas.getContext('2d', { alpha: true }),
-			spots = [],
-			lastPoint = null,
-			lastAddTime = 0,
+			cells = {},
+			targetPoint = null,
+			trailPoint = null,
+			lastStampTime = 0,
+			lastFrameTime = 0,
 			isVisible = true,
-			maxSpots = 150,
-			spotLifetime = 4400,
-			baseRadius = 78,
+			cellSize = 14,
+			stampInterval = 46,
+			followEase = 0.085,
+			decayPerSecond = 0.52,
+			maxHeat = 2.45,
 			deviceScale = 1;
 
 		canvas.id = 'thermal-cursor-trail';
@@ -58,105 +64,167 @@
 			return Math.max(min, Math.min(max, value));
 		};
 
+		var cellKey = function(x, y) {
+			return x + ':' + y;
+		};
+
 		var resizeCanvas = function() {
 			deviceScale = Math.min(window.devicePixelRatio || 1, 2);
 			canvas.width = Math.ceil(window.innerWidth * deviceScale);
 			canvas.height = Math.ceil(window.innerHeight * deviceScale);
 			canvas.style.width = window.innerWidth + 'px';
 			canvas.style.height = window.innerHeight + 'px';
+			context.imageSmoothingEnabled = false;
 		};
 
-		var addSpot = function(x, y, strength) {
-			spots.push({
-				x: x,
-				y: y,
-				created: performance.now(),
-				life: spotLifetime + (Math.random() * 900),
-				radius: baseRadius + (Math.random() * 34),
-				strength: clamp(strength || 1, 0.35, 1.25)
-			});
+		var addHeatToCell = function(cellX, cellY, amount) {
+			var key = cellKey(cellX, cellY),
+				cell = cells[key];
 
-			if (spots.length > maxSpots)
-				spots.splice(0, spots.length - maxSpots);
-		};
+			if (!cell) {
+				cell = {
+					x: cellX,
+					y: cellY,
+					heat: 0,
+					seed: Math.random()
+				};
 
-		var addInterpolatedTrail = function(x, y) {
-			var now = performance.now(),
-				minDelay = 18,
-				distance = 0,
-				steps = 1,
-				i,
-				progress;
-
-			if (lastPoint) {
-				distance = Math.sqrt(Math.pow(x - lastPoint.x, 2) + Math.pow(y - lastPoint.y, 2));
-				steps = clamp(Math.ceil(distance / 46), 1, 5);
+				cells[key] = cell;
 			}
 
-			if (now - lastAddTime < minDelay && distance < 18)
+			cell.heat = clamp(cell.heat + amount, 0, maxHeat);
+		};
+
+		var stampHeat = function(x, y, strength) {
+			var baseX = Math.floor(x / cellSize),
+				baseY = Math.floor(y / cellSize),
+				radius = 4,
+				cellX,
+				cellY,
+				dx,
+				dy,
+				distance,
+				falloff,
+				jitter;
+
+			for (cellY = baseY - radius; cellY <= baseY + radius; cellY++) {
+				for (cellX = baseX - radius; cellX <= baseX + radius; cellX++) {
+					dx = cellX - baseX;
+					dy = cellY - baseY;
+					distance = Math.sqrt((dx * dx) + (dy * dy));
+
+					if (distance > radius)
+						continue;
+
+					jitter = 0.88 + (Math.random() * 0.22);
+					falloff = Math.pow(1 - (distance / radius), 1.55) * jitter;
+					addHeatToCell(cellX, cellY, strength * falloff);
+				}
+			}
+		};
+
+		var heatColor = function(heat) {
+			heat = clamp(heat, 0, 1);
+
+			if (heat > 0.82)
+				return 'rgba(255, 255, 224, ' + (0.22 + heat * 0.5) + ')';
+
+			if (heat > 0.62)
+				return 'rgba(255, 222, 45, ' + (0.18 + heat * 0.46) + ')';
+
+			if (heat > 0.42)
+				return 'rgba(255, 112, 24, ' + (0.16 + heat * 0.4) + ')';
+
+			if (heat > 0.24)
+				return 'rgba(211, 38, 101, ' + (0.12 + heat * 0.34) + ')';
+
+			return 'rgba(74, 45, 211, ' + (0.08 + heat * 0.28) + ')';
+		};
+
+		var drawCells = function(deltaSeconds) {
+			var activeCells = {},
+				key,
+				cell,
+				normalizedHeat,
+				size,
+				gap,
+				jitterOffset;
+
+			context.clearRect(0, 0, canvas.width, canvas.height);
+			context.globalCompositeOperation = 'lighter';
+
+			for (key in cells) {
+				if (!Object.prototype.hasOwnProperty.call(cells, key))
+					continue;
+
+				cell = cells[key];
+				cell.heat *= Math.pow(decayPerSecond, deltaSeconds);
+
+				if (cell.heat < 0.018)
+					continue;
+
+				normalizedHeat = clamp(cell.heat / maxHeat, 0, 1);
+				gap = normalizedHeat > 0.7 ? 1 : 2;
+				size = Math.max(1, Math.ceil((cellSize - gap) * deviceScale));
+				jitterOffset = (cell.seed > 0.66 && normalizedHeat > 0.18) ? deviceScale : 0;
+
+				context.fillStyle = heatColor(normalizedHeat);
+				context.fillRect(
+					Math.round(cell.x * cellSize * deviceScale) + jitterOffset,
+					Math.round(cell.y * cellSize * deviceScale),
+					size,
+					size
+				);
+
+				activeCells[key] = cell;
+			}
+
+			cells = activeCells;
+		};
+
+		var updateTrailPoint = function(now) {
+			var dx,
+				dy,
+				distance,
+				strength;
+
+			if (!targetPoint)
 				return;
 
-			if (lastPoint) {
-				for (i = 1; i <= steps; i++) {
-					progress = i / steps;
-					addSpot(
-						lastPoint.x + ((x - lastPoint.x) * progress),
-						lastPoint.y + ((y - lastPoint.y) * progress),
-						0.75 + (0.25 * progress)
-					);
-				}
-			} else {
-				addSpot(x, y, 1);
+			if (!trailPoint) {
+				trailPoint = { x: targetPoint.x, y: targetPoint.y };
+				stampHeat(trailPoint.x, trailPoint.y, 1.1);
+				lastStampTime = now;
+				return;
 			}
 
-			lastPoint = { x: x, y: y };
-			lastAddTime = now;
-		};
+			dx = targetPoint.x - trailPoint.x;
+			dy = targetPoint.y - trailPoint.y;
+			distance = Math.sqrt((dx * dx) + (dy * dy));
 
-		var drawHeatSpot = function(spot, agePercent) {
-			var x = spot.x * deviceScale,
-				y = spot.y * deviceScale,
-				radius = spot.radius * deviceScale * (0.65 + (agePercent * 1.45)),
-				fade = Math.pow(1 - agePercent, 1.45) * spot.strength,
-				gradient;
+			trailPoint.x += dx * followEase;
+			trailPoint.y += dy * followEase;
 
-			gradient = context.createRadialGradient(x, y, 0, x, y, radius);
-			gradient.addColorStop(0, 'rgba(255, 255, 225, ' + (0.66 * fade) + ')');
-			gradient.addColorStop(0.16, 'rgba(255, 229, 55, ' + (0.56 * fade) + ')');
-			gradient.addColorStop(0.34, 'rgba(255, 118, 19, ' + (0.42 * fade) + ')');
-			gradient.addColorStop(0.55, 'rgba(219, 42, 83, ' + (0.28 * fade) + ')');
-			gradient.addColorStop(0.76, 'rgba(88, 43, 222, ' + (0.18 * fade) + ')');
-			gradient.addColorStop(1, 'rgba(33, 248, 247, 0)');
-
-			context.fillStyle = gradient;
-			context.beginPath();
-			context.arc(x, y, radius, 0, Math.PI * 2);
-			context.fill();
+			if (now - lastStampTime >= stampInterval || distance > cellSize * 2.25) {
+				strength = clamp(0.78 + (distance / 210), 0.78, 1.42);
+				stampHeat(trailPoint.x, trailPoint.y, strength);
+				lastStampTime = now;
+			}
 		};
 
 		var render = function(now) {
-			var activeSpots = [],
-				agePercent,
-				i;
+			var deltaSeconds = lastFrameTime ? clamp((now - lastFrameTime) / 1000, 0.001, 0.08) : 0.016;
+
+			lastFrameTime = now;
 
 			if (!isVisible) {
 				window.requestAnimationFrame(render);
 				return;
 			}
 
-			context.clearRect(0, 0, canvas.width, canvas.height);
-			context.globalCompositeOperation = 'lighter';
+			updateTrailPoint(now);
+			drawCells(deltaSeconds);
 
-			for (i = 0; i < spots.length; i++) {
-				agePercent = (now - spots[i].created) / spots[i].life;
-
-				if (agePercent < 1) {
-					drawHeatSpot(spots[i], agePercent);
-					activeSpots.push(spots[i]);
-				}
-			}
-
-			spots = activeSpots;
 			window.requestAnimationFrame(render);
 		};
 
@@ -166,19 +234,24 @@
 			if (pointerType && pointerType !== 'mouse' && pointerType !== 'pen')
 				return;
 
-			addInterpolatedTrail(event.clientX, event.clientY);
+			targetPoint = {
+				x: event.clientX,
+				y: event.clientY
+			};
 		};
 
 		var handlePointerLeave = function() {
-			lastPoint = null;
+			targetPoint = null;
+			trailPoint = null;
 		};
 
 		var handleVisibilityChange = function() {
 			isVisible = !document.hidden;
 
 			if (!isVisible) {
-				spots = [];
-				lastPoint = null;
+				cells = {};
+				targetPoint = null;
+				trailPoint = null;
 				context.clearRect(0, 0, canvas.width, canvas.height);
 			}
 		};
@@ -189,7 +262,10 @@
 		$(window)
 			.on('pointermove.thermalTrail mousemove.thermalTrail', handlePointerMove)
 			.on('pointerleave.thermalTrail blur.thermalTrail', handlePointerLeave)
-			.on('resize.thermalTrail orientationchange.thermalTrail', resizeCanvas);
+			.on('resize.thermalTrail orientationchange.thermalTrail', function() {
+				cells = {};
+				resizeCanvas();
+			});
 
 		document.addEventListener('visibilitychange', handleVisibilityChange);
 
