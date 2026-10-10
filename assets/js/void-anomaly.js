@@ -5,7 +5,7 @@
 		var $body = $('body');
 
 		// Footer version marker.
-		$('.site-version').text('V49');
+		$('.site-version').text('V50');
 
 		if ($('#void-anomaly').length > 0)
 			return;
@@ -41,27 +41,33 @@
 				'.void-anomaly-core,' +
 				'.void-anomaly-ring {' +
 					'position: absolute;' +
-					'inset: 0;' +
 					'border-radius: 50%;' +
 					'pointer-events: none;' +
 				'}' +
 				'.void-anomaly-core {' +
 					'inset: 4px;' +
+					'z-index: 2;' +
 					'background: radial-gradient(circle at 42% 38%, #05050b 0%, #010102 58%, rgba(0, 0, 0, 0.02) 72%);' +
 					'box-shadow: inset 0 0 5px #000, 0 0 5px rgba(125, 8, 226, 0.72), 0 0 9px rgba(33, 248, 247, 0.34);' +
 					'animation: voidAnomalyPulse 4.8s ease-in-out infinite;' +
 				'}' +
 				'.void-anomaly-ring {' +
-					'inset: 1px;' +
-					'border: 1px solid rgba(33, 248, 247, 0.42);' +
-					'border-left-color: rgba(125, 8, 226, 0.86);' +
-					'border-bottom-color: rgba(245, 237, 44, 0.42);' +
-					'box-shadow: 0 0 8px rgba(125, 8, 226, 0.34), inset 0 0 7px rgba(0, 0, 0, 0.9);' +
-					'animation: voidAnomalySpin 5.8s linear infinite;' +
+					'left: -7px;' +
+					'top: 5px;' +
+					'z-index: 3;' +
+					'width: 32px;' +
+					'height: 8px;' +
+					'border: 1px solid rgba(33, 248, 247, 0.48);' +
+					'border-left-color: rgba(125, 8, 226, 0.9);' +
+					'border-bottom-color: rgba(245, 237, 44, 0.44);' +
+					'background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.68) 0%, rgba(0, 0, 0, 0.24) 48%, rgba(0, 0, 0, 0) 68%);' +
+					'box-shadow: 0 0 8px rgba(125, 8, 226, 0.34), inset 0 0 6px rgba(0, 0, 0, 0.92);' +
+					'animation: voidAnomalyOrbit 5.8s ease-in-out infinite;' +
 				'}' +
 				'.void-anomaly-particles {' +
 					'position: absolute;' +
 					'inset: 0;' +
+					'z-index: 4;' +
 					'pointer-events: none;' +
 				'}' +
 				'.void-anomaly-particle {' +
@@ -75,6 +81,21 @@
 					'box-shadow: 0 0 6px rgba(33, 248, 247, 0.85);' +
 					'opacity: 0;' +
 					'transform: translate(-50%, -50%) rotate(var(--void-angle)) translateX(0);' +
+				'}' +
+				'.void-anomaly.is-click-one {' +
+					'animation: voidAnomalyRumbleOne 420ms ease-out;' +
+					'filter: drop-shadow(0 0 11px rgba(33, 248, 247, 0.46));' +
+				'}' +
+				'.void-anomaly.is-click-one .void-anomaly-core {' +
+					'box-shadow: inset 0 0 5px #000, 0 0 8px rgba(125, 8, 226, 0.9), 0 0 12px rgba(33, 248, 247, 0.46);' +
+				'}' +
+				'.void-anomaly.is-click-two {' +
+					'animation: voidAnomalyRumbleTwo 620ms ease-out;' +
+					'filter: drop-shadow(0 0 15px rgba(33, 248, 247, 0.62));' +
+				'}' +
+				'.void-anomaly.is-click-two .void-anomaly-ring {' +
+					'animation: voidAnomalyOrbit 620ms linear infinite;' +
+					'box-shadow: 0 0 12px rgba(125, 8, 226, 0.58), 0 0 10px rgba(33, 248, 247, 0.38), inset 0 0 7px rgba(0, 0, 0, 0.94);' +
 				'}' +
 				'.void-anomaly.is-shattering {' +
 					'animation: voidAnomalyShatter 900ms cubic-bezier(0.15, 0.85, 0.22, 1) forwards;' +
@@ -100,9 +121,24 @@
 					'0%, 100% { transform: scale(0.92); }' +
 					'50% { transform: scale(1.18); }' +
 				'}' +
-				'@keyframes voidAnomalySpin {' +
-					'from { transform: rotate(0deg); }' +
-					'to { transform: rotate(360deg); }' +
+				'@keyframes voidAnomalyOrbit {' +
+					'0% { transform: rotate(-20deg) scaleX(1); }' +
+					'50% { transform: rotate(160deg) scaleX(1.04); }' +
+					'100% { transform: rotate(340deg) scaleX(1); }' +
+				'}' +
+				'@keyframes voidAnomalyRumbleOne {' +
+					'0%, 100% { transform: translate(0, 0) scale(1); }' +
+					'25% { transform: translate(-1px, 0) scale(1.08); }' +
+					'50% { transform: translate(1px, -1px) scale(1.04); }' +
+					'75% { transform: translate(0, 1px) scale(1.1); }' +
+				'}' +
+				'@keyframes voidAnomalyRumbleTwo {' +
+					'0%, 100% { transform: translate(0, 0) scale(1); }' +
+					'15% { transform: translate(-2px, 1px) scale(1.18); }' +
+					'30% { transform: translate(2px, -1px) scale(1.08); }' +
+					'45% { transform: translate(-2px, -2px) scale(1.22); }' +
+					'60% { transform: translate(2px, 1px) scale(1.12); }' +
+					'78% { transform: translate(-1px, 2px) scale(1.2); }' +
 				'}' +
 				'@keyframes voidAnomalyShatter {' +
 					'0% { transform: scale(1); opacity: 1; }' +
@@ -110,9 +146,9 @@
 					'100% { transform: scale(1.15); opacity: 0; }' +
 				'}' +
 				'@keyframes voidAnomalyRingBreak {' +
-					'0% { transform: rotate(0deg) scale(1); opacity: 1; }' +
-					'40% { transform: rotate(120deg) scale(1.55); opacity: 0.85; }' +
-					'100% { transform: rotate(260deg) scale(2.55); opacity: 0; }' +
+					'0% { transform: rotate(-20deg) scaleX(1) scaleY(1); opacity: 1; }' +
+					'40% { transform: rotate(120deg) scaleX(1.7) scaleY(1.35); opacity: 0.85; }' +
+					'100% { transform: rotate(260deg) scaleX(2.7) scaleY(1.9); opacity: 0; }' +
 				'}' +
 				'@keyframes voidAnomalyCoreCollapse {' +
 					'0% { transform: scale(1); opacity: 1; }' +
@@ -140,6 +176,10 @@
 						'animation: none !important;' +
 						'transition: none !important;' +
 					'}' +
+					'.void-anomaly.is-click-one,' +
+					'.void-anomaly.is-click-two {' +
+						'transform: scale(1.12);' +
+					'}' +
 					'.void-anomaly.is-shattering { opacity: 0; }' +
 				'}' +
 			'</style>'
@@ -152,21 +192,46 @@
 		}
 
 		var $void = $(
-			'<button type="button" id="void-anomaly" class="void-anomaly" aria-label="Shatter hidden void anomaly">' +
+			'<button type="button" id="void-anomaly" class="void-anomaly" aria-label="Charge hidden void anomaly">' +
 				'<span class="void-anomaly-core" aria-hidden="true"></span>' +
 				'<span class="void-anomaly-ring" aria-hidden="true"></span>' +
 				'<span class="void-anomaly-particles" aria-hidden="true">' + particleMarkup + '</span>' +
 			'</button>'
 		);
 
-		$body.append($void);
+		var clickCount = 0,
+			clickResetTimer = null,
+			stageTimer = null;
 
-		$void.on('click', function() {
+		var resetClickProgress = function() {
+			clickCount = 0;
+			$void.removeClass('is-click-one is-click-two');
+		};
 
-			if ($void.hasClass('is-shattering') || $void.hasClass('is-dormant'))
-				return;
+		var queueClickReset = function() {
+			window.clearTimeout(clickResetTimer);
+			clickResetTimer = window.setTimeout(resetClickProgress, 3800);
+		};
 
-			$void.addClass('is-shattering');
+		var playClickStage = function(stageClass, duration) {
+			window.clearTimeout(stageTimer);
+			$void.removeClass('is-click-one is-click-two');
+
+			if ($void[0])
+				void $void[0].offsetWidth;
+
+			$void.addClass(stageClass);
+
+			stageTimer = window.setTimeout(function() {
+				$void.removeClass(stageClass);
+			}, duration);
+		};
+
+		var shatterVoid = function() {
+			window.clearTimeout(clickResetTimer);
+			window.clearTimeout(stageTimer);
+			clickCount = 0;
+			$void.removeClass('is-click-one is-click-two').addClass('is-shattering');
 
 			window.setTimeout(function() {
 				$void.removeClass('is-shattering').addClass('is-dormant');
@@ -179,6 +244,30 @@
 			window.setTimeout(function() {
 				$void.removeClass('is-reforming');
 			}, 8350);
+		};
+
+		$body.append($void);
+
+		$void.on('click', function() {
+
+			if ($void.hasClass('is-shattering') || $void.hasClass('is-dormant') || $void.hasClass('is-reforming'))
+				return;
+
+			clickCount += 1;
+
+			if (clickCount === 1) {
+				playClickStage('is-click-one', 440);
+				queueClickReset();
+				return;
+			}
+
+			if (clickCount === 2) {
+				playClickStage('is-click-two', 660);
+				queueClickReset();
+				return;
+			}
+
+			shatterVoid();
 
 		});
 
