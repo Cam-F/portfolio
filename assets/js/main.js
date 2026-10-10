@@ -35,7 +35,7 @@
 		$('form').placeholder();
 
 		// Footer version marker.
-		$('.site-version').text('V46');
+		$('.site-version').text('V47');
 
 		// Add script-injected portfolio project cards.
 		var addUnannouncedCards = function() {
@@ -65,7 +65,8 @@
 							'transition: transform 220ms ease, box-shadow 220ms ease;' +
 							'will-change: transform;' +
 						'}' +
-						'.game-card:hover {' +
+						'.game-card:hover,' +
+						'.game-card.is-scroll-active {' +
 							'transform: translateY(-4px);' +
 							'box-shadow: 0 12px 26px rgba(0, 0, 0, 0.28), inset 0 0 0 1px var(--card-glow-border), 0 0 18px var(--card-glow-soft), 0 0 38px var(--card-glow-wide);' +
 						'}' +
@@ -99,7 +100,8 @@
 							'--card-glow-soft: rgba(104, 218, 212, 0.16);' +
 							'--card-glow-wide: rgba(198, 89, 85, 0.14);' +
 						'}' +
-						'.jar-wars-game-card:hover {' +
+						'.jar-wars-game-card:hover,' +
+						'.jar-wars-game-card.is-scroll-active {' +
 							'box-shadow: 0 12px 26px rgba(0, 0, 0, 0.28), inset 0 0 0 1px rgba(104, 218, 212, 0.44), -14px 0 26px rgba(198, 89, 85, 0.22), 14px 0 26px rgba(104, 218, 212, 0.22), 0 0 38px rgba(80, 174, 181, 0.12);' +
 						'}' +
 						'.game-card .game-card-main-image {' +
@@ -108,7 +110,8 @@
 						'.game-card .game-card-main-image img {' +
 							'transition: transform 340ms ease, filter 340ms ease;' +
 						'}' +
-						'.game-card:hover .game-card-main-image img {' +
+						'.game-card:hover .game-card-main-image img,' +
+						'.game-card.is-scroll-active .game-card-main-image img {' +
 							'transform: scale(1.018);' +
 							'filter: saturate(1.05) brightness(1.03);' +
 						'}' +
@@ -117,7 +120,8 @@
 								'transition: none;' +
 								'will-change: auto;' +
 							'}' +
-							'.game-card:hover {' +
+							'.game-card:hover,' +
+							'.game-card.is-scroll-active {' +
 								'transform: none;' +
 							'}' +
 							'.game-card .game-card-main-image img {' +
@@ -261,8 +265,74 @@
 			});
 		};
 
+		var initMobileActiveCardGlow = function() {
+			var $cards = $('.thumbnails .game-card'),
+				mediaQuery = window.matchMedia ? window.matchMedia('(max-width: 736px), (hover: none), (pointer: coarse)') : null,
+				isTicking = false;
+
+			var isMobileCardGlowEnabled = function() {
+				return !mediaQuery || mediaQuery.matches;
+			};
+
+			var updateActiveCard = function() {
+				var viewportHeight = window.innerHeight || document.documentElement.clientHeight,
+					viewportWidth = window.innerWidth || document.documentElement.clientWidth,
+					bestCard = null,
+					bestVisibleArea = 0;
+
+				isTicking = false;
+
+				if (!isMobileCardGlowEnabled()) {
+					$cards.removeClass('is-scroll-active');
+					return;
+				}
+
+				$cards.each(function() {
+					var rect = this.getBoundingClientRect(),
+						visibleWidth = Math.max(0, Math.min(rect.right, viewportWidth) - Math.max(rect.left, 0)),
+						visibleHeight = Math.max(0, Math.min(rect.bottom, viewportHeight) - Math.max(rect.top, 0)),
+						visibleArea = visibleWidth * visibleHeight;
+
+					if (visibleArea > bestVisibleArea) {
+						bestVisibleArea = visibleArea;
+						bestCard = this;
+					}
+				});
+
+				$cards.removeClass('is-scroll-active');
+
+				if (bestCard && bestVisibleArea > 0)
+					$(bestCard).addClass('is-scroll-active');
+			};
+
+			var requestActiveCardUpdate = function() {
+				if (isTicking)
+					return;
+
+				isTicking = true;
+
+				if (window.requestAnimationFrame)
+					window.requestAnimationFrame(updateActiveCard);
+				else
+					window.setTimeout(updateActiveCard, 16);
+			};
+
+			$window.on('scroll.mobileCardGlow resize.mobileCardGlow orientationchange.mobileCardGlow', requestActiveCardUpdate);
+
+			if (mediaQuery) {
+				if (mediaQuery.addEventListener)
+					mediaQuery.addEventListener('change', requestActiveCardUpdate);
+				else if (mediaQuery.addListener)
+					mediaQuery.addListener(requestActiveCardUpdate);
+			}
+
+			$window.on('load.mobileCardGlow', requestActiveCardUpdate);
+			requestActiveCardUpdate();
+		};
+
 		addUnannouncedCards();
 		addExpandableDescriptions();
+		initMobileActiveCardGlow();
 
 		// Banner.
 		var $banner = $('#banner');
