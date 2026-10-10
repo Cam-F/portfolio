@@ -7,7 +7,7 @@
 			finePointerQuery = window.matchMedia('(hover: hover) and (pointer: fine)');
 
 		// Footer version marker.
-		$('.site-version').text('V59');
+		$('.site-version').text('V60');
 
 		if ($('#thermal-cursor-trail').length > 0 || reducedMotionQuery.matches || !finePointerQuery.matches)
 			return;
@@ -21,11 +21,11 @@
 					'width: 100vw;' +
 					'height: 100vh;' +
 					'pointer-events: none;' +
-					'opacity: 0.9;' +
+					'opacity: 0.84;' +
 					'mix-blend-mode: screen;' +
 					'image-rendering: pixelated;' +
 					'image-rendering: crisp-edges;' +
-					'filter: saturate(1.68) contrast(1.12);' +
+					'filter: saturate(1.45) contrast(1.08) brightness(1.05);' +
 				'}' +
 				'#main,' +
 				'#footer {' +
@@ -146,18 +146,18 @@
 			heat = clamp(heat, 0, 1);
 
 			if (heat > 0.78)
-				return 'rgba(255, 18, 24, ' + (0.36 + heat * 0.54) + ')';
+				return 'rgba(5, 36, 255, ' + (0.34 + heat * 0.54) + ')';
 
-			if (heat > 0.56)
-				return 'rgba(255, 211, 0, ' + (0.26 + heat * 0.5) + ')';
+			if (heat > 0.58)
+				return 'rgba(0, 74, 230, ' + (0.26 + heat * 0.5) + ')';
 
-			if (heat > 0.35)
-				return 'rgba(72, 255, 42, ' + (0.2 + heat * 0.44) + ')';
+			if (heat > 0.38)
+				return 'rgba(0, 112, 205, ' + (0.2 + heat * 0.44) + ')';
 
-			if (heat > 0.18)
-				return 'rgba(0, 170, 255, ' + (0.16 + heat * 0.38) + ')';
+			if (heat > 0.2)
+				return 'rgba(0, 159, 232, ' + (0.14 + heat * 0.36) + ')';
 
-			return 'rgba(0, 62, 255, ' + (0.1 + heat * 0.28) + ')';
+			return 'rgba(50, 218, 255, ' + (0.08 + heat * 0.24) + ')';
 		};
 
 		var drawCells = function(deltaSeconds) {
