@@ -2,74 +2,104 @@
 
 	$(function() {
 
-		var $body = $('body');
+		var $body = $('body'),
+			$host = $('#banner header').first();
 
 		// Footer version marker.
-		$('.site-version').text('V51');
+		$('.site-version').text('V52');
 
 		if ($('#void-anomaly').length > 0)
 			return;
 
+		if ($host.length === 0)
+			$host = $body;
+
+		$host.addClass('void-anomaly-host');
+
 		$('head').append(
 			'<style id="void-anomaly-styles">' +
+				'#banner header.void-anomaly-host {' +
+					'position: relative;' +
+					'overflow: visible;' +
+				'}' +
 				'.void-anomaly {' +
 					'position: absolute;' +
-					'top: 9.5rem;' +
-					'left: auto;' +
-					'right: 17.5%;' +
-					'z-index: 6;' +
-					'width: 20px;' +
-					'height: 20px;' +
+					'z-index: 8;' +
+					'width: 38px;' +
+					'height: 28px;' +
 					'padding: 0;' +
 					'border: 0;' +
-					'border-radius: 50%;' +
 					'background: transparent;' +
 					'cursor: pointer;' +
-					'opacity: 0.95;' +
+					'opacity: 0.92;' +
 					'overflow: visible;' +
 					'appearance: none;' +
 					'-webkit-appearance: none;' +
-					'filter: drop-shadow(0 0 8px rgba(33, 248, 247, 0.35));' +
+					'filter: drop-shadow(0 0 6px rgba(255, 94, 0, 0.34)) drop-shadow(0 0 8px rgba(33, 159, 255, 0.25));' +
 					'transition: opacity 220ms ease, transform 220ms ease, filter 220ms ease;' +
 				'}' +
 				'.void-anomaly:hover,' +
 				'.void-anomaly:focus {' +
 					'opacity: 1;' +
-					'transform: scale(1.18);' +
+					'transform: scale(1.13);' +
 					'outline: 0;' +
-					'filter: drop-shadow(0 0 12px rgba(33, 248, 247, 0.55));' +
+					'filter: drop-shadow(0 0 8px rgba(255, 126, 0, 0.55)) drop-shadow(0 0 10px rgba(57, 181, 255, 0.42));' +
 				'}' +
+				'.void-anomaly-light-tail,' +
+				'.void-anomaly-accretion,' +
 				'.void-anomaly-core,' +
-				'.void-anomaly-ring {' +
-					'position: absolute;' +
-					'border-radius: 50%;' +
-					'pointer-events: none;' +
-				'}' +
-				'.void-anomaly-core {' +
-					'inset: 4px;' +
-					'z-index: 2;' +
-					'background: radial-gradient(circle at 42% 38%, #05050b 0%, #010102 58%, rgba(0, 0, 0, 0.02) 72%);' +
-					'box-shadow: inset 0 0 5px #000, 0 0 6px rgba(125, 8, 226, 0.82), 0 0 11px rgba(33, 248, 247, 0.42);' +
-					'animation: voidAnomalyPulse 4.8s ease-in-out infinite;' +
-				'}' +
-				'.void-anomaly-ring {' +
-					'left: -7px;' +
-					'top: 6px;' +
-					'z-index: 3;' +
-					'width: 34px;' +
-					'height: 8px;' +
-					'border: 1px solid rgba(33, 248, 247, 0.62);' +
-					'border-left-color: rgba(125, 8, 226, 0.95);' +
-					'border-bottom-color: rgba(245, 237, 44, 0.52);' +
-					'background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.68) 0%, rgba(0, 0, 0, 0.24) 48%, rgba(0, 0, 0, 0) 68%);' +
-					'box-shadow: 0 0 9px rgba(125, 8, 226, 0.42), inset 0 0 6px rgba(0, 0, 0, 0.92);' +
-					'animation: voidAnomalyOrbit 5.8s ease-in-out infinite;' +
-				'}' +
 				'.void-anomaly-particles {' +
 					'position: absolute;' +
-					'inset: 0;' +
-					'z-index: 4;' +
 					'pointer-events: none;' +
+				'}' +
+				'.void-anomaly-light-tail {' +
+					'left: -17px;' +
+					'top: 8px;' +
+					'z-index: 1;' +
+					'width: 72px;' +
+					'height: 14px;' +
+					'border-radius: 999px;' +
+					'background: linear-gradient(90deg, rgba(48, 167, 255, 0.34) 0%, rgba(48, 167, 255, 0.18) 20%, rgba(0, 0, 0, 0) 39%, rgba(255, 247, 174, 0.54) 51%, rgba(255, 153, 0, 0.50) 65%, rgba(255, 56, 0, 0.18) 100%);' +
+					'filter: blur(2px);' +
+					'transform: rotate(-13deg);' +
+					'animation: voidAnomalyTail 4.8s ease-in-out infinite;' +
+				'}' +
+				'.void-anomaly-accretion {' +
+					'left: -8px;' +
+					'top: 7px;' +
+					'z-index: 2;' +
+					'width: 56px;' +
+					'height: 15px;' +
+					'border-radius: 50%;' +
+					'background: conic-gradient(from 214deg, rgba(255, 44, 0, 0.08), rgba(255, 72, 0, 0.88), rgba(255, 163, 0, 0.98), rgba(255, 246, 153, 0.96), rgba(255, 180, 18, 0.92), rgba(255, 80, 0, 0.68), rgba(77, 166, 255, 0.38), rgba(255, 44, 0, 0.08));' +
+					'box-shadow: 0 0 8px rgba(255, 111, 0, 0.72), 0 0 13px rgba(255, 26, 0, 0.34), 0 0 10px rgba(66, 168, 255, 0.28);' +
+					'transform: rotate(-13deg);' +
+					'animation: voidAnomalyDisk 5.6s linear infinite;' +
+				'}' +
+				'.void-anomaly-accretion:after {' +
+					'content: "";' +
+					'position: absolute;' +
+					'inset: 3px 6px;' +
+					'border-radius: 50%;' +
+					'border-top: 2px solid rgba(255, 236, 123, 0.92);' +
+					'border-bottom: 2px solid rgba(255, 75, 0, 0.58);' +
+					'filter: blur(0.2px);' +
+				'}' +
+				'.void-anomaly-core {' +
+					'left: 14px;' +
+					'top: 4px;' +
+					'z-index: 3;' +
+					'width: 20px;' +
+					'height: 18px;' +
+					'border-radius: 50%;' +
+					'background: #000;' +
+					'transform: rotate(-11deg) scaleX(1.12);' +
+					'box-shadow: inset -2px 1px 0 rgba(255, 255, 255, 0.58), -5px 4px 7px rgba(255, 184, 22, 0.82), 5px -2px 9px rgba(56, 174, 255, 0.50), 0 0 13px rgba(0, 0, 0, 0.95);' +
+					'animation: voidAnomalyCorePulse 4.6s ease-in-out infinite;' +
+				'}' +
+				'.void-anomaly-particles {' +
+					'inset: 0;' +
+					'z-index: 5;' +
 				'}' +
 				'.void-anomaly-particle {' +
 					'position: absolute;' +
@@ -78,31 +108,33 @@
 					'width: 2px;' +
 					'height: 2px;' +
 					'border-radius: 50%;' +
-					'background: #21f8f7;' +
-					'box-shadow: 0 0 6px rgba(33, 248, 247, 0.85);' +
+					'background: var(--void-particle-color);' +
+					'box-shadow: 0 0 7px var(--void-particle-color);' +
 					'opacity: 0;' +
 					'transform: translate(-50%, -50%) rotate(var(--void-angle)) translateX(0);' +
 				'}' +
 				'.void-anomaly.is-click-one {' +
 					'animation: voidAnomalyRumbleOne 420ms ease-out;' +
-					'filter: drop-shadow(0 0 11px rgba(33, 248, 247, 0.46));' +
 				'}' +
-				'.void-anomaly.is-click-one .void-anomaly-core {' +
-					'box-shadow: inset 0 0 5px #000, 0 0 8px rgba(125, 8, 226, 0.9), 0 0 12px rgba(33, 248, 247, 0.46);' +
+				'.void-anomaly.is-click-one .void-anomaly-accretion {' +
+					'filter: brightness(1.28) saturate(1.18);' +
 				'}' +
 				'.void-anomaly.is-click-two {' +
 					'animation: voidAnomalyRumbleTwo 620ms ease-out;' +
-					'filter: drop-shadow(0 0 15px rgba(33, 248, 247, 0.62));' +
+					'filter: drop-shadow(0 0 11px rgba(255, 126, 0, 0.72)) drop-shadow(0 0 13px rgba(57, 181, 255, 0.55));' +
 				'}' +
-				'.void-anomaly.is-click-two .void-anomaly-ring {' +
-					'animation: voidAnomalyOrbit 620ms linear infinite;' +
-					'box-shadow: 0 0 12px rgba(125, 8, 226, 0.58), 0 0 10px rgba(33, 248, 247, 0.38), inset 0 0 7px rgba(0, 0, 0, 0.94);' +
+				'.void-anomaly.is-click-two .void-anomaly-accretion {' +
+					'animation: voidAnomalyDisk 500ms linear infinite;' +
+					'filter: brightness(1.42) saturate(1.34);' +
 				'}' +
 				'.void-anomaly.is-shattering {' +
 					'animation: voidAnomalyShatter 900ms cubic-bezier(0.15, 0.85, 0.22, 1) forwards;' +
 				'}' +
-				'.void-anomaly.is-shattering .void-anomaly-ring {' +
-					'animation: voidAnomalyRingBreak 900ms ease-out forwards;' +
+				'.void-anomaly.is-shattering .void-anomaly-light-tail {' +
+					'animation: voidAnomalyTailBreak 900ms ease-out forwards;' +
+				'}' +
+				'.void-anomaly.is-shattering .void-anomaly-accretion {' +
+					'animation: voidAnomalyDiskBreak 900ms ease-out forwards;' +
 				'}' +
 				'.void-anomaly.is-shattering .void-anomaly-core {' +
 					'animation: voidAnomalyCoreCollapse 900ms ease-out forwards;' +
@@ -118,43 +150,51 @@
 				'.void-anomaly.is-reforming {' +
 					'animation: voidAnomalyReform 700ms ease-out forwards;' +
 				'}' +
-				'@keyframes voidAnomalyPulse {' +
-					'0%, 100% { transform: scale(0.92); }' +
-					'50% { transform: scale(1.18); }' +
+				'@keyframes voidAnomalyTail {' +
+					'0%, 100% { opacity: 0.64; transform: rotate(-13deg) scaleX(0.94); }' +
+					'50% { opacity: 0.9; transform: rotate(-13deg) scaleX(1.05); }' +
 				'}' +
-				'@keyframes voidAnomalyOrbit {' +
-					'0% { transform: rotate(-20deg) scaleX(1); }' +
-					'50% { transform: rotate(160deg) scaleX(1.04); }' +
-					'100% { transform: rotate(340deg) scaleX(1); }' +
+				'@keyframes voidAnomalyDisk {' +
+					'0% { transform: rotate(-13deg) scaleX(1); }' +
+					'50% { transform: rotate(167deg) scaleX(1.05); }' +
+					'100% { transform: rotate(347deg) scaleX(1); }' +
+				'}' +
+				'@keyframes voidAnomalyCorePulse {' +
+					'0%, 100% { transform: rotate(-11deg) scaleX(1.12) scale(0.96); }' +
+					'50% { transform: rotate(-11deg) scaleX(1.12) scale(1.05); }' +
 				'}' +
 				'@keyframes voidAnomalyRumbleOne {' +
 					'0%, 100% { transform: translate(0, 0) scale(1); }' +
-					'25% { transform: translate(-1px, 0) scale(1.08); }' +
+					'25% { transform: translate(-1px, 0) scale(1.07); }' +
 					'50% { transform: translate(1px, -1px) scale(1.04); }' +
-					'75% { transform: translate(0, 1px) scale(1.1); }' +
+					'75% { transform: translate(0, 1px) scale(1.09); }' +
 				'}' +
 				'@keyframes voidAnomalyRumbleTwo {' +
 					'0%, 100% { transform: translate(0, 0) scale(1); }' +
-					'15% { transform: translate(-2px, 1px) scale(1.18); }' +
+					'15% { transform: translate(-2px, 1px) scale(1.17); }' +
 					'30% { transform: translate(2px, -1px) scale(1.08); }' +
-					'45% { transform: translate(-2px, -2px) scale(1.22); }' +
+					'45% { transform: translate(-2px, -2px) scale(1.2); }' +
 					'60% { transform: translate(2px, 1px) scale(1.12); }' +
-					'78% { transform: translate(-1px, 2px) scale(1.2); }' +
+					'78% { transform: translate(-1px, 2px) scale(1.18); }' +
 				'}' +
 				'@keyframes voidAnomalyShatter {' +
 					'0% { transform: scale(1); opacity: 1; }' +
-					'24% { transform: scale(2.45); opacity: 1; }' +
-					'100% { transform: scale(1.15); opacity: 0; }' +
+					'24% { transform: scale(2.1); opacity: 1; }' +
+					'100% { transform: scale(1.1); opacity: 0; }' +
 				'}' +
-				'@keyframes voidAnomalyRingBreak {' +
-					'0% { transform: rotate(-20deg) scaleX(1) scaleY(1); opacity: 1; }' +
-					'40% { transform: rotate(120deg) scaleX(1.7) scaleY(1.35); opacity: 0.85; }' +
-					'100% { transform: rotate(260deg) scaleX(2.7) scaleY(1.9); opacity: 0; }' +
+				'@keyframes voidAnomalyTailBreak {' +
+					'0% { transform: rotate(-13deg) scaleX(1); opacity: 0.95; }' +
+					'100% { transform: rotate(-23deg) scaleX(2.4); opacity: 0; }' +
+				'}' +
+				'@keyframes voidAnomalyDiskBreak {' +
+					'0% { transform: rotate(-13deg) scaleX(1) scaleY(1); opacity: 1; }' +
+					'45% { transform: rotate(120deg) scaleX(1.7) scaleY(1.22); opacity: 0.9; }' +
+					'100% { transform: rotate(260deg) scaleX(2.6) scaleY(1.75); opacity: 0; }' +
 				'}' +
 				'@keyframes voidAnomalyCoreCollapse {' +
-					'0% { transform: scale(1); opacity: 1; }' +
-					'32% { transform: scale(0.6); opacity: 1; }' +
-					'100% { transform: scale(0.05); opacity: 0; }' +
+					'0% { transform: rotate(-11deg) scaleX(1.12) scale(1); opacity: 1; }' +
+					'32% { transform: rotate(-11deg) scaleX(1.12) scale(0.56); opacity: 1; }' +
+					'100% { transform: rotate(-11deg) scaleX(1.12) scale(0.05); opacity: 0; }' +
 				'}' +
 				'@keyframes voidAnomalyParticle {' +
 					'0% { opacity: 0; transform: translate(-50%, -50%) rotate(var(--void-angle)) translateX(0); }' +
@@ -163,23 +203,24 @@
 				'}' +
 				'@keyframes voidAnomalyReform {' +
 					'0% { transform: scale(0.1); opacity: 0; }' +
-					'60% { transform: scale(1.35); opacity: 0.92; }' +
-					'100% { transform: scale(1); opacity: 0.95; }' +
+					'60% { transform: scale(1.25); opacity: 0.96; }' +
+					'100% { transform: scale(1); opacity: 0.92; }' +
 				'}' +
 				'@media screen and (max-width: 736px) {' +
 					'.void-anomaly { display: none; }' +
 				'}' +
 				'@media (prefers-reduced-motion: reduce) {' +
 					'.void-anomaly,' +
+					'.void-anomaly-light-tail,' +
+					'.void-anomaly-accretion,' +
 					'.void-anomaly-core,' +
-					'.void-anomaly-ring,' +
 					'.void-anomaly-particle {' +
 						'animation: none !important;' +
 						'transition: none !important;' +
 					'}' +
 					'.void-anomaly.is-click-one,' +
 					'.void-anomaly.is-click-two {' +
-						'transform: scale(1.12);' +
+						'transform: scale(1.1);' +
 					'}' +
 					'.void-anomaly.is-shattering { opacity: 0; }' +
 				'}' +
@@ -187,22 +228,24 @@
 		);
 
 		var voidPositions = [
-			{ name: 'upper-left', top: '8.95rem', left: '7%', right: 'auto' },
-			{ name: 'upper-right', top: '8.75rem', left: 'auto', right: '7%' },
-			{ name: 'lower-left', top: '17.6rem', left: '28%', right: 'auto' },
-			{ name: 'lower-right', top: '17.35rem', left: 'auto', right: '28%' }
+			{ name: 'name-upper-left', top: '0.85rem', left: 'calc(50% - 18.2rem)' },
+			{ name: 'name-upper-right', top: '0.85rem', left: 'calc(50% + 16.4rem)' },
+			{ name: 'title-lower-left', top: '5.95rem', left: 'calc(50% - 8.35rem)' },
+			{ name: 'title-lower-right', top: '5.95rem', left: 'calc(50% + 7.25rem)' }
 		];
 
-		var particleMarkup = '';
+		var particleMarkup = '',
+			particleColors = ['#ff5300', '#ffb000', '#fff09a', '#38aeff'];
 
-		for (var i = 0; i < 16; i++) {
-			particleMarkup += '<span class="void-anomaly-particle" style="--void-angle:' + (i * 22.5) + 'deg; --void-distance:' + (22 + (i % 5) * 5) + 'px; --void-delay:' + (i % 4) * 24 + 'ms;"></span>';
+		for (var i = 0; i < 18; i++) {
+			particleMarkup += '<span class="void-anomaly-particle" style="--void-angle:' + (i * 20) + 'deg; --void-distance:' + (24 + (i % 6) * 5) + 'px; --void-delay:' + (i % 5) * 22 + 'ms; --void-particle-color:' + particleColors[i % particleColors.length] + ';"></span>';
 		}
 
 		var $void = $(
 			'<button type="button" id="void-anomaly" class="void-anomaly" aria-label="Charge hidden void anomaly">' +
+				'<span class="void-anomaly-light-tail" aria-hidden="true"></span>' +
+				'<span class="void-anomaly-accretion" aria-hidden="true"></span>' +
 				'<span class="void-anomaly-core" aria-hidden="true"></span>' +
-				'<span class="void-anomaly-ring" aria-hidden="true"></span>' +
 				'<span class="void-anomaly-particles" aria-hidden="true">' + particleMarkup + '</span>' +
 			'</button>'
 		);
@@ -236,7 +279,7 @@
 				.css({
 					top: position.top,
 					left: position.left,
-					right: position.right
+					right: 'auto'
 				});
 		};
 
@@ -264,7 +307,7 @@
 			}, duration);
 		};
 
-		$body.append($void);
+		$host.append($void);
 		applyRandomPosition();
 
 		$void.on('click', function() {
