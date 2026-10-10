@@ -7,7 +7,7 @@
 			finePointerQuery = window.matchMedia('(hover: hover) and (pointer: fine)');
 
 		// Footer version marker.
-		$('.site-version').text('V65');
+		$('.site-version').text('V68');
 
 		if ($('#thermal-cursor-trail').length > 0 || reducedMotionQuery.matches || !finePointerQuery.matches)
 			return;
@@ -27,16 +27,55 @@
 					'image-rendering: crisp-edges;' +
 					'filter: saturate(1.52) contrast(1.1) brightness(1.04);' +
 				'}' +
+				'#thermal-trail-toggle {' +
+					'position: fixed;' +
+					'right: 2.25em;' +
+					'bottom: 1.55em;' +
+					'z-index: 5;' +
+					'border: 0;' +
+					'background: transparent;' +
+					'box-shadow: none;' +
+					'padding: .35em .45em;' +
+					'font-family: monospace;' +
+					'font-size: .78em;' +
+					'font-weight: 700;' +
+					'letter-spacing: .12em;' +
+					'line-height: 1;' +
+					'color: rgba(255,255,255,.45);' +
+					'cursor: pointer;' +
+					'user-select: none;' +
+					'text-decoration: none;' +
+					'text-transform: uppercase;' +
+					'text-shadow: 0 0 8px rgba(0,0,0,.55);' +
+				'}' +
+				'#thermal-trail-toggle:focus {' +
+					'outline: 1px dotted rgba(255,255,255,.72);' +
+					'outline-offset: 4px;' +
+				'}' +
+				'#thermal-trail-toggle .thermal-toggle-option {' +
+					'color: rgba(255,255,255,.34);' +
+					'transition: color 160ms ease, text-shadow 160ms ease;' +
+				'}' +
+				'#thermal-trail-toggle[data-state="on"] .thermal-toggle-on,' +
+				'#thermal-trail-toggle[data-state="off"] .thermal-toggle-off {' +
+					'color: rgba(255,255,255,.98);' +
+					'text-shadow: 0 0 6px rgba(255,255,255,.22), 0 0 12px rgba(76,211,255,.18);' +
+				'}' +
+				'#thermal-trail-toggle[data-state="on"] .thermal-toggle-off,' +
+				'#thermal-trail-toggle[data-state="off"] .thermal-toggle-on {' +
+					'color: rgba(255,255,255,.32);' +
+					'text-shadow: none;' +
+				'}' +
 				'#main,' +
 				'#footer {' +
 					'position: relative;' +
 					'z-index: 1;' +
 				'}' +
 				'@media screen and (max-width: 736px) {' +
-					'#thermal-cursor-trail { display: none; }' +
+					'#thermal-cursor-trail, #thermal-trail-toggle { display: none; }' +
 				'}' +
 				'@media (prefers-reduced-motion: reduce) {' +
-					'#thermal-cursor-trail { display: none; }' +
+					'#thermal-cursor-trail, #thermal-trail-toggle { display: none; }' +
 				'}' +
 			'</style>'
 		);
@@ -54,6 +93,8 @@
 			pointerSpeed = 0,
 			dwellSeconds = 0,
 			isVisible = true,
+			thermalTrailEnabled = true,
+			$toggle = null,
 			cellSize = 5,
 			stampInterval = 34,
 			followEase = 0.18,
@@ -391,7 +432,7 @@
 				intensityAmount,
 				movedSinceStamp;
 
-			if (!targetPoint)
+			if (!targetPoint || !thermalTrailEnabled)
 				return;
 
 			pointerSpeed *= Math.pow(0.12, deltaSeconds);
@@ -434,12 +475,35 @@
 			lastStampTime = now;
 		};
 
+		var setThermalTrailEnabled = function(enabled) {
+			thermalTrailEnabled = enabled;
+			canvas.style.display = enabled ? 'block' : 'none';
+
+			if ($toggle) {
+				$toggle
+					.attr('data-state', enabled ? 'on' : 'off')
+					.attr('aria-pressed', enabled ? 'true' : 'false')
+					.attr('aria-label', enabled ? 'Turn thermal cursor trail off' : 'Turn thermal cursor trail on');
+			}
+
+			if (!enabled) {
+				cells = {};
+				targetPoint = null;
+				heatPoint = null;
+				lastPointerPoint = null;
+				lastStampPoint = null;
+				pointerSpeed = 0;
+				dwellSeconds = 0;
+				context.clearRect(0, 0, canvas.width, canvas.height);
+			}
+		};
+
 		var render = function(now) {
 			var deltaSeconds = lastFrameTime ? clamp((now - lastFrameTime) / 1000, 0.001, 0.08) : 0.016;
 
 			lastFrameTime = now;
 
-			if (!isVisible) {
+			if (!isVisible || !thermalTrailEnabled) {
 				window.requestAnimationFrame(render);
 				return;
 			}
@@ -458,7 +522,7 @@
 				deltaTime,
 				distance;
 
-			if (pointerType && pointerType !== 'mouse' && pointerType !== 'pen')
+			if (!thermalTrailEnabled || (pointerType && pointerType !== 'mouse' && pointerType !== 'pen'))
 				return;
 
 			if (lastPointerPoint) {
@@ -505,7 +569,23 @@
 			}
 		};
 
+		$toggle = $(
+			'<button id="thermal-trail-toggle" type="button" data-state="on" aria-label="Turn thermal cursor trail off" aria-pressed="true">' +
+				'<span class="thermal-toggle-bracket">[ </span>' +
+				'<span class="thermal-toggle-option thermal-toggle-on">ON</span>' +
+				'<span class="thermal-toggle-divider"> / </span>' +
+				'<span class="thermal-toggle-option thermal-toggle-off">OFF</span>' +
+				'<span class="thermal-toggle-bracket"> ]</span>' +
+			'</button>'
+		);
+
+		$body.append($toggle);
+		$toggle.on('click.thermalTrail', function() {
+			setThermalTrailEnabled(!thermalTrailEnabled);
+		});
+
 		resizeCanvas();
+		setThermalTrailEnabled(true);
 		window.requestAnimationFrame(render);
 
 		$(window)
