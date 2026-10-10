@@ -7,7 +7,7 @@
 			finePointerQuery = window.matchMedia('(hover: hover) and (pointer: fine)');
 
 		// Footer version marker.
-		$('.site-version').text('V64');
+		$('.site-version').text('V65');
 
 		if ($('#thermal-cursor-trail').length > 0 || reducedMotionQuery.matches || !finePointerQuery.matches)
 			return;
@@ -167,51 +167,85 @@
 		var stampHeat = function(x, y, strength, intensityAmount, now) {
 			var baseX = Math.floor(x / cellSize),
 				baseY = Math.floor(y / cellSize),
-				radius = Math.round(5 + (intensityAmount * 6.5)),
-				coreRadius = 0.72 + (intensityAmount * 1.28),
-				stampSalt = Math.floor(now / 340),
+				radius = Math.round(5 + (intensityAmount * 6.8)),
+				coreRadius = 0.68 + (intensityAmount * 1.18),
+				stampSalt = Math.floor(now / 410),
+				lobeAngle = (cellNoise(baseX, baseY, stampSalt + 31) * Math.PI * 2) + (now * 0.0017),
+				lobeDistanceA = radius * (0.22 + (intensityAmount * 0.16)),
+				lobeDistanceB = radius * (0.17 + (intensityAmount * 0.12)),
+				lobeAX = Math.cos(lobeAngle) * lobeDistanceA,
+				lobeAY = Math.sin(lobeAngle) * lobeDistanceA,
+				lobeBX = Math.cos(lobeAngle + 2.25) * lobeDistanceB,
+				lobeBY = Math.sin(lobeAngle + 2.25) * lobeDistanceB,
+				stretchX = 0.82 + (cellNoise(baseX, baseY, stampSalt + 12) * 0.36),
+				stretchY = 1.18 - (cellNoise(baseX, baseY, stampSalt + 18) * 0.32),
+				shear = (cellNoise(baseX, baseY, stampSalt + 24) - 0.5) * (0.34 + (intensityAmount * 0.32)),
 				cellX,
 				cellY,
 				dx,
 				dy,
+				warpedX,
+				warpedY,
 				angle,
-				distance,
+				mainDistance,
+				lobeDistanceOne,
+				lobeDistanceTwo,
 				shapeNoise,
 				edgeNoise,
-				wobble,
-				localRadius,
+				edgeWobble,
+				mainRadius,
+				lobeRadiusA,
+				lobeRadiusB,
+				mainEdge,
+				lobeEdgeA,
+				lobeEdgeB,
 				edge,
 				falloff,
 				variance;
 
-			for (cellY = baseY - radius - 2; cellY <= baseY + radius + 2; cellY++) {
-				for (cellX = baseX - radius - 2; cellX <= baseX + radius + 2; cellX++) {
+			for (cellY = baseY - radius - 4; cellY <= baseY + radius + 4; cellY++) {
+				for (cellX = baseX - radius - 4; cellX <= baseX + radius + 4; cellX++) {
 					dx = cellX - baseX;
 					dy = cellY - baseY;
 					angle = Math.atan2(dy, dx);
 					shapeNoise = cellNoise(cellX, cellY, stampSalt);
 					edgeNoise = animatedNoise(cellX, cellY, now, 17);
-					wobble =
-						(Math.sin((angle * 3.2) + (now * 0.0042)) * (0.55 + (intensityAmount * 0.52))) +
-						(Math.cos((angle * 5.8) - (now * 0.0031)) * (0.38 + (intensityAmount * 0.46))) +
-						((edgeNoise - 0.5) * (0.95 + (intensityAmount * 1.25)));
-					localRadius = (radius * (0.82 + (shapeNoise * 0.16) + (intensityAmount * 0.04))) + wobble;
-					distance = Math.sqrt((dx * dx * 0.96) + (dy * dy * 1.04));
-					edge = 1 - (distance / Math.max(localRadius, 1));
+
+					warpedX = (dx * stretchX) + (dy * shear);
+					warpedY = (dy * stretchY) + (Math.sin((dx * 0.5) + (now * 0.003)) * (0.18 + (intensityAmount * 0.26)));
+
+					edgeWobble =
+						(Math.sin((angle * 2.15) + (now * 0.0036)) * (0.85 + (intensityAmount * 0.8))) +
+						(Math.cos((angle * 4.7) - (now * 0.0028)) * (0.55 + (intensityAmount * 0.6))) +
+						(Math.sin((angle * 7.1) + (shapeNoise * 5.4) + (now * 0.0021)) * (0.32 + (intensityAmount * 0.48))) +
+						((edgeNoise - 0.5) * (1.35 + (intensityAmount * 1.55)));
+
+					mainRadius = (radius * (0.72 + (shapeNoise * 0.13) + (intensityAmount * 0.05))) + edgeWobble;
+					lobeRadiusA = radius * (0.42 + (intensityAmount * 0.16) + (edgeNoise * 0.09));
+					lobeRadiusB = radius * (0.34 + (intensityAmount * 0.12) + (shapeNoise * 0.08));
+
+					mainDistance = Math.sqrt((warpedX * warpedX) + (warpedY * warpedY));
+					lobeDistanceOne = Math.sqrt(Math.pow(warpedX - lobeAX, 2) + Math.pow(warpedY - lobeAY, 2));
+					lobeDistanceTwo = Math.sqrt(Math.pow(warpedX - lobeBX, 2) + Math.pow(warpedY - lobeBY, 2));
+
+					mainEdge = 1 - (mainDistance / Math.max(mainRadius, 1));
+					lobeEdgeA = (1 - (lobeDistanceOne / Math.max(lobeRadiusA, 1))) * (0.72 + (intensityAmount * 0.18));
+					lobeEdgeB = (1 - (lobeDistanceTwo / Math.max(lobeRadiusB, 1))) * (0.58 + (intensityAmount * 0.15));
+					edge = Math.max(mainEdge, lobeEdgeA, lobeEdgeB);
 
 					if (edge <= 0)
 						continue;
 
 					variance =
-						0.93 +
-						((shapeNoise - 0.5) * 0.12) +
-						((edgeNoise - 0.5) * 0.08) +
-						(Math.sin((cellX * 0.92) + (cellY * 1.18) + (now * 0.006)) * 0.045);
+						0.94 +
+						((shapeNoise - 0.5) * 0.11) +
+						((edgeNoise - 0.5) * 0.1) +
+						(Math.sin((cellX * 0.92) + (cellY * 1.18) + (now * 0.006)) * 0.04);
 
-					if (distance <= coreRadius) {
+					if (mainDistance <= coreRadius || lobeDistanceOne <= coreRadius * 0.88) {
 						falloff = (1.08 + (intensityAmount * 1.18)) * variance;
 					} else {
-						falloff = Math.pow(edge, 1.32) * (0.74 + (intensityAmount * 0.48)) * variance;
+						falloff = Math.pow(edge, 1.22) * (0.74 + (intensityAmount * 0.5)) * variance;
 					}
 
 					if (falloff <= 0)
@@ -287,11 +321,11 @@
 
 			hotAmount = clamp((heat - 0.7) / 0.28, 0, 1);
 			edgeShift =
-				0.76 +
-				(Math.sin((cell.x * 0.72) + (cell.y * 0.48) + (now * 0.009)) * 0.12) +
-				((animatedNoise(cell.x, cell.y, now, 29) - 0.5) * 0.22);
+				0.78 +
+				(Math.sin((cell.x * 0.72) + (cell.y * 0.48) + (now * 0.009)) * 0.14) +
+				((animatedNoise(cell.x, cell.y, now, 29) - 0.5) * 0.26);
 
-			return clamp(((drop - 0.08) / 0.34) * hotAmount * edgeShift, 0, 1);
+			return clamp(((drop - 0.07) / 0.32) * hotAmount * edgeShift, 0, 1);
 		};
 
 		var drawCells = function(deltaSeconds, now) {
