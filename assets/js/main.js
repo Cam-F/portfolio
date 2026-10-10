@@ -32,7 +32,7 @@
 			$('form').placeholder();
 
 		// Footer version marker.
-			$('.site-version').text('V44');
+			$('.site-version').text('V45');
 
 		// Add script-injected portfolio project cards.
 			var addUnannouncedCards = function() {
