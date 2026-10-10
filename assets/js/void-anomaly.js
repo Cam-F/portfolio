@@ -7,7 +7,7 @@
 			finePointerQuery = window.matchMedia('(hover: hover) and (pointer: fine)');
 
 		// Footer version marker.
-		$('.site-version').text('V57');
+		$('.site-version').text('V58');
 
 		if ($('#thermal-cursor-trail').length > 0 || reducedMotionQuery.matches || !finePointerQuery.matches)
 			return;
@@ -21,11 +21,11 @@
 					'width: 100vw;' +
 					'height: 100vh;' +
 					'pointer-events: none;' +
-					'opacity: 0.78;' +
+					'opacity: 0.88;' +
 					'mix-blend-mode: screen;' +
 					'image-rendering: pixelated;' +
 					'image-rendering: crisp-edges;' +
-					'filter: saturate(1.24);' +
+					'filter: saturate(1.58) contrast(1.08);' +
 				'}' +
 				'#main,' +
 				'#footer {' +
@@ -127,18 +127,21 @@
 			heat = clamp(heat, 0, 1);
 
 			if (heat > 0.82)
-				return 'rgba(255, 255, 224, ' + (0.22 + heat * 0.5) + ')';
+				return 'rgba(255, 18, 36, ' + (0.34 + heat * 0.52) + ')';
 
-			if (heat > 0.62)
-				return 'rgba(255, 222, 45, ' + (0.18 + heat * 0.46) + ')';
+			if (heat > 0.68)
+				return 'rgba(255, 84, 0, ' + (0.28 + heat * 0.5) + ')';
 
-			if (heat > 0.42)
-				return 'rgba(255, 112, 24, ' + (0.16 + heat * 0.4) + ')';
+			if (heat > 0.52)
+				return 'rgba(255, 221, 0, ' + (0.24 + heat * 0.48) + ')';
 
-			if (heat > 0.24)
-				return 'rgba(211, 38, 101, ' + (0.12 + heat * 0.34) + ')';
+			if (heat > 0.34)
+				return 'rgba(82, 255, 40, ' + (0.2 + heat * 0.42) + ')';
 
-			return 'rgba(74, 45, 211, ' + (0.08 + heat * 0.28) + ')';
+			if (heat > 0.18)
+				return 'rgba(0, 169, 255, ' + (0.16 + heat * 0.36) + ')';
+
+			return 'rgba(0, 62, 255, ' + (0.1 + heat * 0.28) + ')';
 		};
 
 		var drawCells = function(deltaSeconds) {
