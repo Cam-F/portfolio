@@ -32,7 +32,7 @@
 			$('form').placeholder();
 
 		// Footer version marker.
-			$('.site-version').text('V40');
+			$('.site-version').text('V41');
 
 		// Add script-injected portfolio project cards.
 			var addUnannouncedCards = function() {
@@ -55,61 +55,32 @@
 								'cursor: default;' +
 								'opacity: 0.86;' +
 							'}' +
-							'@keyframes dust-card-glow {' +
-								'0%, 100% { box-shadow: inset 0 0 0 1px rgba(255, 122, 32, 0.42), 0 0 14px rgba(255, 90, 0, 0.18), 0 0 30px rgba(255, 70, 0, 0.14); }' +
-								'50% { box-shadow: inset 0 0 0 1px rgba(255, 184, 32, 0.56), 0 0 22px rgba(255, 126, 0, 0.25), 0 0 44px rgba(255, 70, 0, 0.18); }' +
-							'}' +
-							'.dust-game-card {' +
-								'position: relative;' +
-								'overflow: visible;' +
+							'.game-card {' +
 								'transition: transform 220ms ease, box-shadow 220ms ease;' +
-								'animation: dust-card-glow 5.8s ease-in-out infinite;' +
-								'box-shadow: inset 0 0 0 1px rgba(255, 122, 32, 0.42), 0 0 14px rgba(255, 90, 0, 0.18), 0 0 30px rgba(255, 70, 0, 0.14);' +
+								'will-change: transform;' +
 							'}' +
-							'.dust-game-card:before {' +
-								'content: "";' +
-								'position: absolute;' +
-								'top: -20px;' +
-								'left: -18px;' +
-								'width: 120px;' +
-								'height: 120px;' +
-								'pointer-events: none;' +
-								'border-radius: 999px;' +
-								'background: radial-gradient(circle, rgba(255, 226, 0, 0.26) 0%, rgba(255, 122, 32, 0.16) 38%, rgba(255, 122, 32, 0) 72%);' +
-								'filter: blur(10px);' +
-								'opacity: 0.72;' +
-								'transition: opacity 220ms ease, transform 220ms ease;' +
-								'z-index: 0;' +
-							'}' +
-							'.dust-game-card > * {' +
-								'position: relative;' +
-								'z-index: 1;' +
-							'}' +
-							'.dust-game-card:hover {' +
+							'.game-card:hover {' +
 								'transform: translateY(-4px);' +
-								'animation-play-state: paused;' +
-								'box-shadow: inset 0 0 0 1px rgba(255, 184, 32, 0.68), 0 0 24px rgba(255, 126, 0, 0.34), 0 0 52px rgba(255, 70, 0, 0.24);' +
+								'box-shadow: 0 12px 26px rgba(0, 0, 0, 0.28), 0 0 18px rgba(255, 255, 255, 0.10), 0 0 34px rgba(255, 122, 32, 0.10);' +
 							'}' +
-							'.dust-game-card:hover:before {' +
-								'opacity: 0.95;' +
-								'transform: scale(1.08);' +
-							'}' +
-							'.dust-game-card .game-card-main-image {' +
+							'.game-card .game-card-main-image {' +
 								'overflow: hidden;' +
 							'}' +
-							'.dust-game-card .game-card-main-image img {' +
+							'.game-card .game-card-main-image img {' +
 								'transition: transform 340ms ease, filter 340ms ease;' +
 							'}' +
-							'.dust-game-card:hover .game-card-main-image img {' +
-								'transform: scale(1.025);' +
-								'filter: saturate(1.08) brightness(1.04);' +
+							'.game-card:hover .game-card-main-image img {' +
+								'transform: scale(1.018);' +
+								'filter: saturate(1.05) brightness(1.03);' +
 							'}' +
 							'@media (prefers-reduced-motion: reduce) {' +
-								'.dust-game-card {' +
-									'animation: none;' +
+								'.game-card {' +
 									'transition: none;' +
 								'}' +
-								'.dust-game-card .game-card-main-image img {' +
+								'.game-card:hover {' +
+									'transform: none;' +
+								'}' +
+								'.game-card .game-card-main-image img {' +
 									'transition: none;' +
 								'}' +
 							'}' +
