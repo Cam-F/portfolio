@@ -35,7 +35,7 @@
 		$('form').placeholder();
 
 		// Footer version marker.
-		$('.site-version').text('V47');
+		$('.site-version').text('V48');
 
 		// Add script-injected portfolio project cards.
 		var addUnannouncedCards = function() {
@@ -47,6 +47,56 @@
 			if ($('#unannounced-game-card-styles').length === 0) {
 				$('head').append(
 					'<style id="unannounced-game-card-styles">' +
+						'.thumbnails {' +
+							'display: grid !important;' +
+							'grid-template-columns: repeat(3, minmax(0, 1fr));' +
+							'gap: 1.6em;' +
+							'align-items: stretch;' +
+						'}' +
+						'.thumbnails .box.game-card {' +
+							'width: auto !important;' +
+							'max-width: none;' +
+							'margin: 0 !important;' +
+						'}' +
+						'@media screen and (min-width: 1360px) {' +
+							'.thumbnails {' +
+								'grid-template-columns: repeat(4, minmax(0, 1fr));' +
+								'gap: 1.35em;' +
+							'}' +
+							'.game-card .inner {' +
+								'padding: 1.65em 1.35em 2em;' +
+							'}' +
+							'.game-card h3 {' +
+								'font-size: 1.55em;' +
+							'}' +
+							'.game-card-developer {' +
+								'font-size: 0.88em;' +
+							'}' +
+							'.game-card-meta {' +
+								'gap: 0.45em;' +
+								'margin-bottom: 1.35em;' +
+							'}' +
+							'.game-card-meta-pill {' +
+								'font-size: 0.72em;' +
+								'letter-spacing: 0.03em;' +
+								'padding: 0.55em 0.52em;' +
+							'}' +
+							'.game-card-actions {' +
+								'max-width: 230px;' +
+								'margin-bottom: 1.55em;' +
+							'}' +
+						'}' +
+						'@media screen and (min-width: 737px) and (max-width: 979px) {' +
+							'.thumbnails {' +
+								'grid-template-columns: repeat(2, minmax(0, 1fr));' +
+							'}' +
+						'}' +
+						'@media screen and (max-width: 736px) {' +
+							'.thumbnails {' +
+								'grid-template-columns: 1fr;' +
+								'gap: 1.6em;' +
+							'}' +
+						'}' +
 						'.unannounced-game-card .nda-card-art-link {' +
 							'display: block;' +
 							'border: 0 !important;' +
