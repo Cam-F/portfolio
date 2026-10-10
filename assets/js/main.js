@@ -32,7 +32,7 @@
 			$('form').placeholder();
 
 		// Footer version marker.
-			$('.site-version').text('V43');
+			$('.site-version').text('V44');
 
 		// Add script-injected portfolio project cards.
 			var addUnannouncedCards = function() {
@@ -70,6 +70,36 @@
 								'--card-glow-border: rgba(245, 237, 44, 0.58);' +
 								'--card-glow-soft: rgba(245, 237, 44, 0.24);' +
 								'--card-glow-wide: rgba(245, 237, 44, 0.16);' +
+								'position: relative;' +
+								'overflow: visible;' +
+							'}' +
+							'.dust-game-card:before {' +
+								'content: "[ !! ]";' +
+								'position: absolute;' +
+								'top: -1.35em;' +
+								'left: 0.9em;' +
+								'z-index: 3;' +
+								'display: inline-flex;' +
+								'align-items: center;' +
+								'justify-content: center;' +
+								'padding: 0.45em 0.68em 0.38em;' +
+								'font-family: "Courier New", "Lucida Console", monospace;' +
+								'font-size: 0.82em;' +
+								'font-weight: 700;' +
+								'letter-spacing: 0.12em;' +
+								'line-height: 1;' +
+								'color: #f5ed2c;' +
+								'background: #050505;' +
+								'border: 1px solid rgba(245, 237, 44, 0.56);' +
+								'border-radius: 3px;' +
+								'box-shadow: 0 0 12px rgba(245, 237, 44, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.12);' +
+								'text-shadow: 0 0 8px rgba(245, 237, 44, 0.28);' +
+								'pointer-events: none;' +
+							'}' +
+							'.dust-game-card:hover:before {' +
+								'color: #fff46d;' +
+								'border-color: rgba(245, 237, 44, 0.78);' +
+								'box-shadow: 0 0 16px rgba(245, 237, 44, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.16);' +
 							'}' +
 							'.redacted-game-card {' +
 								'--card-glow-border: rgba(0, 0, 0, 0.78);' +
