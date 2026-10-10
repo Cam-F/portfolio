@@ -7,7 +7,7 @@
 			finePointerQuery = window.matchMedia('(hover: hover) and (pointer: fine)');
 
 		// Footer version marker.
-		$('.site-version').text('V61');
+		$('.site-version').text('V62');
 
 		if ($('#thermal-cursor-trail').length > 0 || reducedMotionQuery.matches || !finePointerQuery.matches)
 			return;
@@ -54,10 +54,10 @@
 			dwellSeconds = 0,
 			isVisible = true,
 			cellSize = 5,
-			stampInterval = 66,
+			stampInterval = 74,
 			followEase = 0.11,
-			decayPerSecond = 0.54,
-			maxHeat = 4.15,
+			decayPerSecond = 0.56,
+			maxHeat = 4.45,
 			deviceScale = 1;
 
 		canvas.id = 'thermal-cursor-trail';
@@ -104,12 +104,51 @@
 			cell.heat = clamp(cell.heat + amount, 0, maxHeat);
 		};
 
-		var stampHeat = function(x, y, strength, dwellAmount) {
+		var sampleHeatAround = function(x, y, radius) {
 			var baseX = Math.floor(x / cellSize),
 				baseY = Math.floor(y / cellSize),
-				radius = Math.round(6 + (dwellAmount * 6)),
-				coreRadius = 0.72 + (dwellAmount * 1.25),
-				stampSalt = Math.floor(performance.now() / 210),
+				totalHeat = 0,
+				totalWeight = 0,
+				cellX,
+				cellY,
+				dx,
+				dy,
+				distance,
+				weight,
+				cell;
+
+			for (cellY = baseY - radius; cellY <= baseY + radius; cellY++) {
+				for (cellX = baseX - radius; cellX <= baseX + radius; cellX++) {
+					dx = cellX - baseX;
+					dy = cellY - baseY;
+					distance = Math.sqrt((dx * dx) + (dy * dy));
+
+					if (distance > radius)
+						continue;
+
+					cell = cells[cellKey(cellX, cellY)];
+
+					if (!cell)
+						continue;
+
+					weight = Math.pow(1 - (distance / radius), 1.6);
+					totalHeat += clamp(cell.heat / maxHeat, 0, 1) * weight;
+					totalWeight += weight;
+				}
+			}
+
+			if (totalWeight <= 0)
+				return 0;
+
+			return clamp(totalHeat / totalWeight, 0, 1);
+		};
+
+		var stampHeat = function(x, y, strength, intensityAmount, pathAmount) {
+			var baseX = Math.floor(x / cellSize),
+				baseY = Math.floor(y / cellSize),
+				radius = Math.round(5 + (intensityAmount * 6) + (pathAmount * 3)),
+				coreRadius = 0.62 + (intensityAmount * 1.15) + (pathAmount * 0.5),
+				stampSalt = Math.floor(performance.now() / 230),
 				cellX,
 				cellY,
 				dx,
@@ -126,21 +165,21 @@
 					dx = cellX - baseX;
 					dy = cellY - baseY;
 					shapeNoise = cellNoise(cellX, cellY, stampSalt);
-					localRadius = radius * (0.58 + (shapeNoise * 0.54) + (dwellAmount * 0.16));
+					localRadius = radius * (0.55 + (shapeNoise * 0.52) + (intensityAmount * 0.12) + (pathAmount * 0.18));
 					distance = Math.sqrt((dx * dx * (0.84 + (shapeNoise * 0.22))) + (dy * dy * (1.08 - (shapeNoise * 0.18))));
 
 					if (distance > localRadius)
 						continue;
 
-					if (distance > coreRadius && shapeNoise < (0.14 + (distance / Math.max(radius, 1)) * 0.18))
+					if (distance > coreRadius && shapeNoise < (0.16 + (distance / Math.max(radius, 1)) * 0.19))
 						continue;
 
-					if (distance <= coreRadius && Math.abs(dx) + Math.abs(dy) <= 1 + Math.round(dwellAmount)) {
-						coreBoost = 1.4 + (dwellAmount * 1.45) + (shapeNoise * 0.32);
+					if (distance <= coreRadius && Math.abs(dx) + Math.abs(dy) <= 1 + Math.round(intensityAmount + pathAmount)) {
+						coreBoost = 1.2 + (intensityAmount * 1.35) + (pathAmount * 1.25) + (shapeNoise * 0.28);
 						falloff = coreBoost;
 					} else {
-						speckle = 0.42 + (cellNoise(cellX, cellY, stampSalt + 4) * 0.78);
-						falloff = Math.pow(1 - (distance / localRadius), 2.45) * speckle * (0.55 + (dwellAmount * 0.85));
+						speckle = 0.38 + (cellNoise(cellX, cellY, stampSalt + 4) * 0.82);
+						falloff = Math.pow(1 - (distance / localRadius), 2.55) * speckle * (0.46 + (intensityAmount * 0.7) + (pathAmount * 0.74));
 					}
 
 					addHeatToCell(cellX, cellY, strength * falloff);
@@ -213,7 +252,9 @@
 				isSettling,
 				dwellAmount,
 				movingAmount,
-				strength;
+				pathAmount,
+				strength,
+				intensityAmount;
 
 			if (!targetPoint)
 				return;
@@ -229,29 +270,38 @@
 			dy = targetPoint.y - trailPoint.y;
 			distanceToTarget = Math.sqrt((dx * dx) + (dy * dy));
 			idleMilliseconds = now - lastPointerMoveTime;
-			isSettling = distanceToTarget < 3.5 && (pointerSpeed < 0.1 || idleMilliseconds > 120);
+			isSettling = distanceToTarget < 3.5 && (pointerSpeed < 0.1 || idleMilliseconds > 150);
 
 			trailPoint.x += dx * followEase;
 			trailPoint.y += dy * followEase;
 
 			if (isSettling) {
-				dwellSeconds = clamp(dwellSeconds + deltaSeconds, 0, 1.35);
+				dwellSeconds = clamp(dwellSeconds + (deltaSeconds * 0.62), 0, 1.9);
 			} else {
-				dwellSeconds = clamp(dwellSeconds - (deltaSeconds * 2.7), 0, 1.35);
+				dwellSeconds = clamp(dwellSeconds - (deltaSeconds * 1.85), 0, 1.9);
 			}
 
 			if (now - lastStampTime < stampInterval)
 				return;
 
-			dwellAmount = clamp(dwellSeconds / 1.05, 0, 1);
+			pathAmount = sampleHeatAround(trailPoint.x, trailPoint.y, 7);
+			dwellAmount = clamp((dwellSeconds - 0.22) / 1.36, 0, 1);
 			movingAmount = clamp(pointerSpeed / 1.3, 0, 1);
-			strength = dwellAmount > 0.06 ? (0.44 + (dwellAmount * 1.65)) : (0.11 + ((1 - movingAmount) * 0.14));
+
+			if (dwellAmount > 0.05) {
+				strength = 0.28 + (dwellAmount * 1.38) + (pathAmount * 0.42);
+			} else {
+				strength = 0.06 + ((1 - movingAmount) * 0.08) + (pathAmount * 0.78);
+			}
+
+			intensityAmount = clamp(0.08 + (dwellAmount * 0.8) + (pathAmount * 0.42), 0.08, 1);
 
 			stampHeat(
 				trailPoint.x,
 				trailPoint.y,
 				strength,
-				clamp(0.12 + (dwellAmount * 0.9), 0.12, 1)
+				intensityAmount,
+				pathAmount
 			);
 
 			lastStampTime = now;
@@ -290,7 +340,7 @@
 				pointerSpeed = (pointerSpeed * 0.45) + ((distance / deltaTime) * 0.55);
 
 				if (distance > 4)
-					dwellSeconds = Math.max(0, dwellSeconds - 0.18);
+					dwellSeconds = Math.max(0, dwellSeconds - 0.22);
 			} else {
 				pointerSpeed = 0;
 			}
