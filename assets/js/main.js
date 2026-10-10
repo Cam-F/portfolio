@@ -32,7 +32,7 @@
 			$('form').placeholder();
 
 		// Footer version marker.
-			$('.site-version').text('V41');
+			$('.site-version').text('V42');
 
 		// Add script-injected portfolio project cards.
 			var addUnannouncedCards = function() {
@@ -56,12 +56,48 @@
 								'opacity: 0.86;' +
 							'}' +
 							'.game-card {' +
+								'--card-glow-border: rgba(255, 255, 255, 0.18);' +
+								'--card-glow-soft: rgba(255, 255, 255, 0.10);' +
+								'--card-glow-wide: rgba(255, 255, 255, 0.08);' +
 								'transition: transform 220ms ease, box-shadow 220ms ease;' +
 								'will-change: transform;' +
 							'}' +
 							'.game-card:hover {' +
 								'transform: translateY(-4px);' +
-								'box-shadow: 0 12px 26px rgba(0, 0, 0, 0.28), 0 0 18px rgba(255, 255, 255, 0.10), 0 0 34px rgba(255, 122, 32, 0.10);' +
+								'box-shadow: 0 12px 26px rgba(0, 0, 0, 0.28), inset 0 0 0 1px var(--card-glow-border), 0 0 18px var(--card-glow-soft), 0 0 38px var(--card-glow-wide);' +
+							'}' +
+							'.dust-game-card {' +
+								'--card-glow-border: rgba(245, 237, 44, 0.58);' +
+								'--card-glow-soft: rgba(245, 237, 44, 0.24);' +
+								'--card-glow-wide: rgba(245, 237, 44, 0.16);' +
+							'}' +
+							'.redacted-game-card {' +
+								'--card-glow-border: rgba(125, 8, 226, 0.48);' +
+								'--card-glow-soft: rgba(125, 8, 226, 0.22);' +
+								'--card-glow-wide: rgba(125, 8, 226, 0.16);' +
+							'}' +
+							'.wayfinder-game-card {' +
+								'--card-glow-border: rgba(125, 8, 226, 0.52);' +
+								'--card-glow-soft: rgba(125, 8, 226, 0.24);' +
+								'--card-glow-wide: rgba(125, 8, 226, 0.18);' +
+							'}' +
+							'.ruined-king-game-card {' +
+								'--card-glow-border: rgba(68, 158, 125, 0.52);' +
+								'--card-glow-soft: rgba(68, 158, 125, 0.24);' +
+								'--card-glow-wide: rgba(68, 158, 125, 0.18);' +
+							'}' +
+							'.vicious-circle-game-card {' +
+								'--card-glow-border: rgba(33, 248, 247, 0.50);' +
+								'--card-glow-soft: rgba(33, 248, 247, 0.22);' +
+								'--card-glow-wide: rgba(33, 248, 247, 0.16);' +
+							'}' +
+							'.jar-wars-game-card {' +
+								'--card-glow-border: rgba(104, 218, 212, 0.44);' +
+								'--card-glow-soft: rgba(104, 218, 212, 0.16);' +
+								'--card-glow-wide: rgba(198, 89, 85, 0.14);' +
+							'}' +
+							'.jar-wars-game-card:hover {' +
+								'box-shadow: 0 12px 26px rgba(0, 0, 0, 0.28), inset 0 0 0 1px rgba(104, 218, 212, 0.44), -14px 0 26px rgba(198, 89, 85, 0.22), 14px 0 26px rgba(104, 218, 212, 0.22), 0 0 38px rgba(80, 174, 181, 0.12);' +
 							'}' +
 							'.game-card .game-card-main-image {' +
 								'overflow: hidden;' +
@@ -76,6 +112,7 @@
 							'@media (prefers-reduced-motion: reduce) {' +
 								'.game-card {' +
 									'transition: none;' +
+									'will-change: auto;' +
 								'}' +
 								'.game-card:hover {' +
 									'transform: none;' +
@@ -153,7 +190,7 @@
 						return '<span class="game-card-meta-pill">' + badge + '</span>';
 					}).join('');
 
-					var cardClass = card.image ? 'box game-card dust-game-card' : 'box game-card unannounced-game-card';
+					var cardClass = card.image ? 'box game-card dust-game-card' : 'box game-card redacted-game-card unannounced-game-card';
 					var imageMarkup = card.image
 						? '<a href="' + card.steam + '" target="_blank" class="image fit game-card-main-image"><img src="' + card.image + '" alt="' + card.imageAlt + '" /></a>'
 						: '<a href="images/CameronFullerResume.pdf" target="_blank" class="image fit game-card-main-image nda-card-art-link" aria-label="Resume details for unannounced project"><img src="images/redacted-card.svg" alt="Redacted project artwork" /></a>';
@@ -190,11 +227,21 @@
 					'Vicious Circle': 'Owned testing for multiplayer features, built test cases and documentation, created and tracked bugs in JIRA, and supported playtesting and feedback sessions.'
 				};
 
+				var staticCardClasses = {
+					'Wayfinder': 'wayfinder-game-card',
+					'Ruined King': 'ruined-king-game-card',
+					'Jar Wars': 'jar-wars-game-card',
+					'Vicious Circle': 'vicious-circle-game-card'
+				};
+
 				$('.thumbnails .game-card').each(function() {
 					var $card = $(this),
 						title = $.trim($card.find('h3').first().text()),
 						copy = staticCardDescriptions[title],
 						$description = $card.find('.game-card-description').first();
+
+					if (staticCardClasses[title])
+						$card.addClass(staticCardClasses[title]);
 
 					if (!copy || !$description.length || $card.find('.game-card-details').length > 0)
 						return;
