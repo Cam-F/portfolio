@@ -14,9 +14,9 @@
 			'<style id="void-anomaly-styles">' +
 				'.void-anomaly {' +
 					'position: absolute;' +
-					'top: var(--void-top, 9.5rem);' +
-					'left: var(--void-left, auto);' +
-					'right: var(--void-right, auto);' +
+					'top: 9.5rem;' +
+					'left: auto;' +
+					'right: 17.5%;' +
 					'z-index: 6;' +
 					'width: 20px;' +
 					'height: 20px;' +
@@ -187,10 +187,10 @@
 		);
 
 		var voidPositions = [
-			{ name: 'upper-left', top: '8.95rem', left: '11.5%', right: 'auto' },
-			{ name: 'upper-right', top: '8.75rem', left: 'auto', right: '8.7%' },
-			{ name: 'lower-left', top: '17.6rem', left: '28.2%', right: 'auto' },
-			{ name: 'lower-right', top: '17.35rem', left: 'auto', right: '22.3%' }
+			{ name: 'upper-left', top: '8.95rem', left: '7%', right: 'auto' },
+			{ name: 'upper-right', top: '8.75rem', left: 'auto', right: '7%' },
+			{ name: 'lower-left', top: '17.6rem', left: '28%', right: 'auto' },
+			{ name: 'lower-right', top: '17.35rem', left: 'auto', right: '28%' }
 		];
 
 		var particleMarkup = '';
@@ -234,9 +234,9 @@
 			$void
 				.attr('data-void-position', position.name)
 				.css({
-					'--void-top': position.top,
-					'--void-left': position.left,
-					'--void-right': position.right
+					top: position.top,
+					left: position.left,
+					right: position.right
 				});
 		};
 
